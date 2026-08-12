@@ -2,8 +2,10 @@
 // @name         CnC-TA RankingTool - HE
 // @namespace    Harzi
 // @version      1.3.0
-// @description  Zeigt die C&C-TA-Spielerrangliste bis Rang 50 an
+// @description  C&C-TA Spieler- und Allianz-Ranking mit Rangbereich, Punktetendenzen und Spielersuche
 // @icon         https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/rankingtool-icon.png
+// @downloadURL  https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/CnC-TA-RankingTool-HE.user.js
+// @updateURL    https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/CnC-TA-RankingTool-HE.user.js
 // @author       Harzi
 // @match        https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant        none
