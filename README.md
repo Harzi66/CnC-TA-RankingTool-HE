@@ -52,11 +52,8 @@ direkt aus diesem Repository heruntergeladen und in Tampermonkey installiert wer
 
 ![CnC-TA RankingTool](Screenshot_1.png)
 
-## 🖼️ Icon
+![CnC-TA RankingTool](Screenshot_2.png)
 
-Das RankingTool besitzt ein eigenes Symbol für Tampermonkey.
-
-![RankingTool Icon](rankingtool-icon.png)
 
 ## 📌 Version
 
