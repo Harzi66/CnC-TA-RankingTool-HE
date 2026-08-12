@@ -48,6 +48,10 @@ Alternativ kann die Datei
 
 direkt aus diesem Repository heruntergeladen und in Tampermonkey installiert werden.
 
+##  Screenshot
+
+![Screenshot_1](screenshot_1.png)
+
 ## 🖼️ Icon
 
 Das RankingTool besitzt ein eigenes Symbol für Tampermonkey.
