@@ -27,6 +27,15 @@ Das RankingTool erweitert das Spiel um eine übersichtliche Darstellung des Spie
 - Anzeige der Punktentwicklung
 - Farbliche Kennzeichnung der Punktetendenz
 
+  ### 🏰 Daily-Ranking
+
+- Anzeige des Allianz-Rankings
+- Anzeige des Spieler-Rankings
+- Einstellbare Snapshot Zeiten (werden automatisch erstellt wenn man im Spiel ist)
+- Manuelle Snapshot Auslösung
+- Anzeige der Punktentwicklung seit Snapchat
+- Farbliche Kennzeichnung der Punktetendenz
+
 ### ⚙️ Weitere Funktionen
 
 - Eigenes RankingTool-Symbol im Tampermonkey-Menü
@@ -54,10 +63,12 @@ direkt aus diesem Repository heruntergeladen und in Tampermonkey installiert wer
 
 ![CnC-TA RankingTool](Screenshot_2.png)
 
+![CnC-TA RankingTool](Screenshot_3.png)
+
 
 ## 📌 Version
 
-**Version 1.3.0**
+**Version 1.5.14**
 
 ## 👨‍💻 Autor
 
