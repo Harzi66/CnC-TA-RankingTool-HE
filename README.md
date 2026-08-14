@@ -51,8 +51,6 @@ Voraussetzung:
 - **Tampermonkey**
 - **infernal wrapper**
 
-[**infernal wrapper installieren**](https://raw.githubusercontent.com/Harzi66/CnC-TA-Harzi-Edition/blob/main/Weitere%20C%26C%20TA%20Scripts/infernal%20wrapper.user.js)
-
 ### Direkte Installation
 
 [**CnC-TA RankingTool – HE installieren**](https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/CnC-TA-RankingTool-HE.user.js)
