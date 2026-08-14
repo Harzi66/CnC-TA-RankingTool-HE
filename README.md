@@ -12,10 +12,10 @@ Das RankingTool erweitert das Spiel um eine übersichtliche Darstellung des Spie
 - Frei einstellbarer Rangbereich
 - Rangbereich bis maximal **1000**
 - Einstellung bleibt nach einem Neustart gespeichert
-- Aktualisierung des Rankings über den **Speichern**-Button
+- Aktualisierung des Rankings und Vergleich nach jedem Neustart des Scripts
 - Anzeige der Spielerpunkte
 - Anzeige der Punktentwicklung
-- Farbliche Kennzeichnung der Punktetendenz
+- Farbliche Kennzeichnung der Punktetendenz seit letztem Neustart des Scripts
 - Spielersuche innerhalb des aktuell eingestellten Rangbereichs
 - Automatisches Springen zum gefundenen Spieler
 
@@ -24,8 +24,8 @@ Das RankingTool erweitert das Spiel um eine übersichtliche Darstellung des Spie
 - Anzeige des Allianz-Rankings
 - Anzeige der Punkte der besten 40 Spieler einer Allianz
 - Anzeige der Gesamtpunkte der Allianz
-- Anzeige der Punktentwicklung
-- Farbliche Kennzeichnung der Punktetendenz
+- Aktualisierung des Rankings und Vergleich nach jedem Neustart des Scripts
+- Farbliche Kennzeichnung der Punktetendenz seit letztem Neustart des Scripts
 
 ### 🏰 Daily-Ranking
 
