@@ -46,7 +46,10 @@ Das RankingTool erweitert das Spiel um eine übersichtliche Darstellung des Spie
 
 ## 📥 Installation
 
-Voraussetzung ist **Tampermonkey**.
+Voraussetzung:
+
+**Tampermonkey**.
+**infernal wrapper**.
 
 ### Direkte Installation
 
