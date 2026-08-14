@@ -29,10 +29,11 @@ Das RankingTool erweitert das Spiel um eine übersichtliche Darstellung des Spie
 
 ### 🏰 Daily-Ranking
 
-- Anzeige des Allianz-Rankings
-- Anzeige des Spieler-Rankings
+- Anzeige des Allianz-Rankings nach automatisch oder manuell ausgelösten Snapshots
+- Anzeige des Spieler-Rankings nach automatisch oder manuell ausgelösten Snapshots
 - Einstellbare Snapshot Zeiten (werden automatisch erstellt wenn man im Spiel ist)
 - Manuelle Snapshot Auslösung
+- Automatische Snapshot Auslösung
 - Anzeige der Punktentwicklung seit Snapchat
 - Farbliche Kennzeichnung der Punktetendenz
 
