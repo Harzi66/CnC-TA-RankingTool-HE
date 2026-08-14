@@ -51,6 +51,8 @@ Voraussetzung:
 - **Tampermonkey**
 - **infernal wrapper**
 
+- https://raw.githubusercontent.com/netquik/CnCTA-SoO-SCRIPT-PACK/master/TA_infernal_wrapper.user.js
+
 ### Direkte Installation
 
 [**CnC-TA RankingTool – HE installieren**](https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/CnC-TA-RankingTool-HE.user.js)
