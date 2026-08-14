@@ -27,7 +27,7 @@ Das RankingTool erweitert das Spiel um eine übersichtliche Darstellung des Spie
 - Anzeige der Punktentwicklung
 - Farbliche Kennzeichnung der Punktetendenz
 
-  ### 🏰 Daily-Ranking
+### 🏰 Daily-Ranking
 
 - Anzeige des Allianz-Rankings
 - Anzeige des Spieler-Rankings
