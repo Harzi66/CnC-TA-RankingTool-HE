@@ -49,9 +49,9 @@ Das RankingTool erweitert das Spiel um eine übersichtliche Darstellung des Spie
 Voraussetzung:
 
 - **Tampermonkey**
-- **infernal wrapper**
+- **TA infernal wrapper**
 
-- [**infernal wrapper installieren**](https://raw.githubusercontent.com/netquik/CnCTA-SoO-SCRIPT-PACK/master/TA_infernal_wrapper.user.js)
+- [**TA_infernal_wrapper installieren**](https://raw.githubusercontent.com/netquik/CnCTA-SoO-SCRIPT-PACK/master/TA_infernal_wrapper.user.js)
 
 ### Direkte Installation
 
