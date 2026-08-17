@@ -2984,21 +2984,85 @@
         );
 
 
-        // Snapshot-Spalte etwas breiter, damit z.B.
-        // "Snapshot (12:14)" vollständig lesbar bleibt.
-        dailyPlayerTable
-            .getTableColumnModel()
-            .setColumnWidth(
+        // -----------------------------------------------------
+        // Spaltenbreiten Daily-Ranking
+        // -----------------------------------------------------
+
+        const dailyPlayerColumnModel =
+              dailyPlayerTable.getTableColumnModel();
+
+        // Rang
+        dailyPlayerColumnModel.setColumnWidth(
+            0,
+            45
+        );
+
+        // Spieler
+        dailyPlayerColumnModel.setColumnWidth(
+            1,
+            120
+        );
+
+        // Allianz
+        dailyPlayerColumnModel.setColumnWidth(
+            2,
+            120
+        );
+
+        // Snapshot
+        dailyPlayerColumnModel.setColumnWidth(
             3,
             125
         );
 
+        // Punkte aktuell
+        dailyPlayerColumnModel.setColumnWidth(
+            4,
+            125
+        );
 
-        dailyAllianceTable
-            .getTableColumnModel()
-            .setColumnWidth(
+        // Änderung
+        dailyPlayerColumnModel.setColumnWidth(
+            5,
+            145
+        );
+
+
+        // -----------------------------------------------------
+        // Spaltenbreiten Daily-Allianz-Ranking
+        // -----------------------------------------------------
+
+        const dailyAllianceColumnModel =
+              dailyAllianceTable.getTableColumnModel();
+
+        // Rang
+        dailyAllianceColumnModel.setColumnWidth(
+            0,
+            45
+        );
+
+        // Allianz
+        dailyAllianceColumnModel.setColumnWidth(
+            1,
+            170
+        );
+
+        // Snapshot
+        dailyAllianceColumnModel.setColumnWidth(
             2,
             125
+        );
+
+        // Punkte aktuell
+        dailyAllianceColumnModel.setColumnWidth(
+            3,
+            145
+        );
+
+        // Änderung
+        dailyAllianceColumnModel.setColumnWidth(
+            4,
+            145
         );
 
 
@@ -4369,132 +4433,132 @@
     }
 
 
-    // =========================================================
-    // AUF SPIEL WARTEN
-    // =========================================================
+// =========================================================
+// AUF SPIEL WARTEN
+// =========================================================
 
-    function waitForGame() {
+function waitForGame() {
 
-        try {
+    try {
 
-            if (
-                typeof qx === 'undefined' ||
-                typeof ClientLib === 'undefined'
-            ) {
-
-                setTimeout(
-                    waitForGame,
-                    1000
-                );
-
-                return;
-            }
-
-
-            if (
-                !qx.core ||
-                !qx.core.Init ||
-                !qx.core.Init.getApplication
-            ) {
-
-                setTimeout(
-                    waitForGame,
-                    1000
-                );
-
-                return;
-            }
-
-
-            qxApp =
-                qx.core.Init.getApplication();
-
-
-            if (!qxApp) {
-
-                setTimeout(
-                    waitForGame,
-                    1000
-                );
-
-                return;
-            }
-
-
-            if (
-                !qxApp.getMenuBar ||
-                !qxApp.getMenuBar()
-            ) {
-
-                setTimeout(
-                    waitForGame,
-                    1000
-                );
-
-                return;
-            }
-
-
-            if (
-                !qxApp
-                .getMenuBar()
-                .getScriptsButton()
-            ) {
-
-                setTimeout(
-                    waitForGame,
-                    1000
-                );
-
-                return;
-            }
-
-
-            initialize();
-
-
-        } catch (e) {
-
-            log.error(
-                'Initialisierungsfehler:',
-                e
-            );
-
+        if (
+            typeof qx === 'undefined' ||
+            typeof ClientLib === 'undefined'
+        ) {
 
             setTimeout(
                 waitForGame,
                 1000
             );
+
+            return;
         }
-    }
 
 
-    // =========================================================
-    // INITIALISIERUNG
-    // =========================================================
+        if (
+            !qx.core ||
+            !qx.core.Init ||
+            !qx.core.Init.getApplication
+        ) {
 
-    function initialize() {
+            setTimeout(
+                waitForGame,
+                1000
+            );
 
-        addScriptsMenuEntry();
+            return;
+        }
 
-        scheduleNextSnapshot();
+
+        qxApp =
+            qx.core.Init.getApplication();
 
 
-        log.success(
-            `${scriptName} gestartet`
+        if (!qxApp) {
+
+            setTimeout(
+                waitForGame,
+                1000
+            );
+
+            return;
+        }
+
+
+        if (
+            !qxApp.getMenuBar ||
+            !qxApp.getMenuBar()
+        ) {
+
+            setTimeout(
+                waitForGame,
+                1000
+            );
+
+            return;
+        }
+
+
+        if (
+            !qxApp
+            .getMenuBar()
+            .getScriptsButton()
+        ) {
+
+            setTimeout(
+                waitForGame,
+                1000
+            );
+
+            return;
+        }
+
+
+        initialize();
+
+
+    } catch (e) {
+
+        log.error(
+            'Initialisierungsfehler:',
+            e
         );
 
 
-        log.info(
-            'Ranking wird erst nach Auswahl im Scripte-Menü geöffnet.'
+        setTimeout(
+            waitForGame,
+            1000
         );
     }
+}
 
 
-    // =========================================================
-    // START
-    // =========================================================
+// =========================================================
+// INITIALISIERUNG
+// =========================================================
 
-    waitForGame();
+function initialize() {
+
+    addScriptsMenuEntry();
+
+    scheduleNextSnapshot();
+
+
+    log.success(
+        `${scriptName} gestartet`
+        );
+
+
+    log.info(
+        'Ranking wird erst nach Auswahl im Scripte-Menü geöffnet.'
+    );
+}
+
+
+// =========================================================
+// START
+// =========================================================
+
+waitForGame();
 
 })();
