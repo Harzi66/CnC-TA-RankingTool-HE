@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CnC-TA RankingTool - HE
 // @namespace    Harzi
-// @version      1.5.14
+// @version      1.5.18
 // @description  C&C-TA Spieler-, Allianz- und Daily-Ranking mit Rangbereich, Spielersuche und Tages-Snapshot
 // @icon         https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/rankingtool-icon.png
 // @downloadURL  https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/CnC-TA-RankingTool-HE.user.js
@@ -10,6 +10,14 @@
 // @match        https://*.alliances.commandandconquer.com/*/index.aspx*
 // @grant        none
 // ==/UserScript==
+
+// Neu in Version 1.5.18
+// Startreihenfolge neu festgelegt
+// Tooltips hinzugefügt
+// Spielersuche in Bereich "Daily-Snapshot" hinzugefpgt
+// Löschbutton für Sucheintrag hinzugefügt
+// verschiedene Textanpassungen
+
 (function () {
     'use strict';
 
@@ -446,8 +454,8 @@
             return {
                 enabled: settings.enabled === true,
                 time: isValidSnapshotTime(settings.time)
-                    ? settings.time
-                    : '24:00'
+                ? settings.time
+                : '24:00'
             };
 
         } catch (e) {
@@ -466,8 +474,8 @@
 
 
     function saveSnapshotSettings(
-        enabled,
-        time
+    enabled,
+     time
     ) {
 
         localStorage.setItem(
@@ -482,7 +490,7 @@
 
 
     function isValidSnapshotTime(
-        time
+    time
     ) {
 
         return (
@@ -495,7 +503,7 @@
 
 
     function getSnapshotMinutes(
-        time
+    time
     ) {
 
         if (time === '24:00') {
@@ -514,7 +522,7 @@
 
 
     function formatSnapshotDate(
-        date
+    date
     ) {
 
         const year =
@@ -541,7 +549,7 @@
 
 
     function formatSnapshotTime(
-        date
+    date
     ) {
 
         return (
@@ -587,8 +595,8 @@
 
 
     function saveRankingSnapshot(
-        players,
-        configuredTime
+    players,
+     configuredTime
     ) {
 
         try {
@@ -601,48 +609,48 @@
             players
                 .slice(0, 100)
                 .forEach(
-                    function (player) {
+                function (player) {
 
-                        if (!player || !player.pn) {
+                    if (!player || !player.pn) {
 
-                            return;
-                        }
-
-                        snapshotPlayers[
-                            player.pn
-                        ] = {
-                            rank:
-                                Number(player.r || 0),
-                            alliance:
-                                player.an || '-',
-                            points:
-                                Number(player.s || 0)
-                        };
-
+                        return;
                     }
-                );
+
+                    snapshotPlayers[
+                        player.pn
+                    ] = {
+                        rank:
+                        Number(player.r || 0),
+                        alliance:
+                        player.an || '-',
+                        points:
+                        Number(player.s || 0)
+                    };
+
+                }
+            );
 
 
             const snapshot = {
 
                 date:
-                    formatSnapshotDate(
-                        now
-                    ),
+                formatSnapshotDate(
+                    now
+                ),
 
                 time:
-                    formatSnapshotTime(
-                        now
-                    ),
+                formatSnapshotTime(
+                    now
+                ),
 
                 configuredTime:
-                    configuredTime,
+                configuredTime,
 
                 capturedAt:
-                    now.toISOString(),
+                now.toISOString(),
 
                 players:
-                    snapshotPlayers
+                snapshotPlayers
 
             };
 
@@ -694,8 +702,8 @@
 
 
     function saveAllianceRankingSnapshot(
-        alliances,
-        configuredTime
+    alliances,
+     configuredTime
     ) {
 
         try {
@@ -706,21 +714,21 @@
                 .slice(0, 25)
                 .forEach(function (alliance) {
 
-                    if (!alliance || !alliance.an) return;
+                if (!alliance || !alliance.an) return;
 
-                    snapshotAlliances[alliance.an] = {
-                        rank:
-                            Number(alliance.r || 0),
-                        top40:
-                            Number(alliance.s || 0),
-                        players:
-                            Number(alliance.pc || 0),
-                        bases:
-                            Number(alliance.bc || 0),
-                        total:
-                            Number(alliance.sc || 0)
-                    };
-                });
+                snapshotAlliances[alliance.an] = {
+                    rank:
+                    Number(alliance.r || 0),
+                    top40:
+                    Number(alliance.s || 0),
+                    players:
+                    Number(alliance.pc || 0),
+                    bases:
+                    Number(alliance.bc || 0),
+                    total:
+                    Number(alliance.sc || 0)
+                };
+            });
 
             const snapshot = {
                 date: formatSnapshotDate(now),
@@ -749,7 +757,7 @@
 
 
     function getAllianceSnapshotPoints(
-        alliance
+    alliance
     ) {
 
         const snapshot = loadLatestAllianceRankingSnapshot();
@@ -787,7 +795,7 @@
 
 
     function getSnapshotPoints(
-        player
+    player
     ) {
 
         const snapshot =
@@ -860,7 +868,7 @@
 
 
     function requestPlayerSnapshot(
-        manual
+    manual
     ) {
 
         log.section(
@@ -917,8 +925,8 @@
 
 
                     function (
-                        context,
-                        data
+                    context,
+                     data
                     ) {
 
                         if (
@@ -940,10 +948,10 @@
 
                         const configuredTime =
                               manual
-                                  ? formatSnapshotTime(
-                                      new Date()
-                                    )
-                                  : settings.time;
+                        ? formatSnapshotTime(
+                            new Date()
+                        )
+                        : settings.time;
 
 
                         saveRankingSnapshot(
@@ -977,7 +985,7 @@
 
 
     function requestAllianceSnapshot(
-        manual
+    manual
     ) {
 
         try {
@@ -989,46 +997,46 @@
             ClientLib.Net.CommunicationManager
                 .GetInstance()
                 .SendSimpleCommand(
-                    'RankingGetData',
-                    {
-                        firstIndex: 0,
-                        lastIndex: 24,
-                        view: view,
-                        rankingType: rankingType,
-                        sortColumn: sortColumn,
-                        ascending: ascending
-                    },
-                    phe.cnc.Util.createEventDelegate(
-                        ClientLib.Net.CommandResult,
-                        this,
-                        function (context, data) {
+                'RankingGetData',
+                {
+                    firstIndex: 0,
+                    lastIndex: 24,
+                    view: view,
+                    rankingType: rankingType,
+                    sortColumn: sortColumn,
+                    ascending: ascending
+                },
+                phe.cnc.Util.createEventDelegate(
+                    ClientLib.Net.CommandResult,
+                    this,
+                    function (context, data) {
 
-                            if (!data || !Array.isArray(data.a)) {
-                                log.error(
-                                    'Allianz-Tages-Snapshot: keine gültigen Allianz-Daten erhalten.',
-                                    data
-                                );
-                                return;
-                            }
-
-                            const settings =
-                                  loadSnapshotSettings();
-
-                            const configuredTime =
-                                  manual
-                                      ? formatSnapshotTime(
-                                          new Date()
-                                        )
-                                      : settings.time;
-
-                            saveAllianceRankingSnapshot(
-                                data.a,
-                                configuredTime
+                        if (!data || !Array.isArray(data.a)) {
+                            log.error(
+                                'Allianz-Tages-Snapshot: keine gültigen Allianz-Daten erhalten.',
+                                data
                             );
+                            return;
                         }
-                    ),
-                    null
-                );
+
+                        const settings =
+                              loadSnapshotSettings();
+
+                        const configuredTime =
+                              manual
+                        ? formatSnapshotTime(
+                            new Date()
+                        )
+                        : settings.time;
+
+                        saveAllianceRankingSnapshot(
+                            data.a,
+                            configuredTime
+                        );
+                    }
+                ),
+                null
+            );
 
             log.info(
                 'RankingGetData für Top 25 Allianzen wurde als Tages-Snapshot gesendet.'
@@ -1265,17 +1273,17 @@
 
         snapshotTimer =
             setTimeout(
-                function () {
+            function () {
 
-                    requestPlayerSnapshot();
+                requestPlayerSnapshot();
 
-                    requestAllianceSnapshot();
+                requestAllianceSnapshot();
 
-                    scheduleNextSnapshot();
+                scheduleNextSnapshot();
 
-                },
-                delay
-            );
+            },
+            delay
+        );
 
 
         log.info(
@@ -1330,7 +1338,7 @@
     // RANKING-FENSTER
     // =========================================================
 
-    function showRanking(players) {
+    function showRanking(players, startView) {
 
         log.section('RANKING ANZEIGE');
 
@@ -1476,7 +1484,7 @@
                     'visible'
                 );
 
-                requestPlayerRanking();
+                requestPlayerRanking('player');
 
             }
         );
@@ -2188,6 +2196,13 @@
             textColor: '#ffff00'
         });
 
+        snapshotAutoCheckBox.setToolTipText(
+            '<div style="width:180px; white-space:normal;">' +
+            'Automatischer Tages-Snapshot <br>' +
+            'zur eingestellten Uhrzeit<br>' +
+            'aktivieren/deaktivieren.' +
+            '</div>'
+        );
 
         try {
 
@@ -2227,15 +2242,16 @@
 
             snapshotAutoStatusLabel.setValue(
                 active
-                    ? 'Automatik aktiv'
-                    : 'Automatik deaktiviert'
+                ? 'Automatik aktiv'
+                : 'Automatik inaktiv'
             );
 
             snapshotAutoStatusLabel.set({
                 textColor:
-                    active
-                        ? '#00cc66'
-                        : '#ffffff'
+                active
+                ? '#00cc66'
+                : '#ff4444',
+                font: 'bold'
             });
         }
 
@@ -2244,9 +2260,9 @@
 
         snapshotAutoStatusLabel.set({
             textColor:
-                snapshotAutoCheckBox.getValue()
-                    ? '#00cc66'
-                    : '#ffffff'
+            snapshotAutoCheckBox.getValue()
+            ? '#00cc66'
+            : '#ffffff'
         });
 
 
@@ -2271,6 +2287,12 @@
             height: 26
         });
 
+        snapshotTimeField.setToolTipText(
+            '<div style="width:230px; white-space:normal;">' +
+            'Uhrzeit festlegen, zu der der automatische <br>' +
+            'Tages-Snapshot ausgelöst wird.' +
+            '</div>'
+        );
 
         const snapshotSaveButton =
               new qx.ui.form.Button(
@@ -2283,6 +2305,13 @@
             height: 26
         });
 
+        snapshotSaveButton.setToolTipText(
+            '<div style="width:210px; white-space:normal;">' +
+            'Auslösen eines automatischen Snapshot zur eingestellten Uhrzeit.<br>' +
+            '<span style="color:red; font-weight:bold;">Achtung!</span> ' +
+            'Du musst zur eingestellten Auslösezeit im Spiel sein!' +
+            '</div>'
+        );
 
         const snapshotNowButton =
               new qx.ui.form.Button(
@@ -2295,11 +2324,17 @@
             height: 26
         });
 
+        snapshotNowButton.setToolTipText(
+            '<div style="width:300px; white-space:normal;">' +
+            'Es wird ein sofortiger Snapshot ausgeführt,<br>' +
+            'welcher bis zur erneuten Auslösung gespeichert wird.' +
+            '</div>'
+        );
 
         snapshotStatusLabel =
             new qx.ui.basic.Label(
-                ''
-            );
+            ''
+        );
 
         snapshotStatusLabel.set({
             textColor: '#ffff00'
@@ -2314,7 +2349,7 @@
                       String(
                           snapshotTimeField.getValue() || ''
                       )
-                      .trim();
+                .trim();
 
                 if (!isValidSnapshotTime(time)) {
                     updateSnapshotAutoStatusLabel();
@@ -2331,8 +2366,8 @@
 
                 log.info(
                     snapshotAutoCheckBox.getValue()
-                        ? 'Tages-Snapshot-Automatik aktiviert.'
-                        : 'Tages-Snapshot-Automatik deaktiviert.'
+                    ? 'Tages-Snapshot-Automatik aktiviert.'
+                    : 'Tages-Snapshot-Automatik deaktiviert.'
                 );
             }
         );
@@ -2346,7 +2381,7 @@
                       String(
                           snapshotTimeField.getValue() || ''
                       )
-                      .trim();
+                .trim();
 
 
                 if (!isValidSnapshotTime(time)) {
@@ -2455,13 +2490,13 @@
 
 
         // -----------------------------------------------------
-        // Snapshot-Einstellungen nur im Daily-Ranking anzeigen
+        // Snapshot-Einstellungen beim Start anzeigen,
+        // da das Daily-Ranking der Start-Reiter ist.
         // -----------------------------------------------------
 
         snapshotContainer.setVisibility(
-            'excluded'
+            'visible'
         );
-
 
         mainContainer.add(
             snapshotContainer
@@ -2483,6 +2518,12 @@
         });
 
 
+        const dailyHeader =
+              new qx.ui.container.Composite(
+                  new qx.ui.layout.HBox(8)
+              );
+
+
         const dailyInfoLabel =
               new qx.ui.basic.Label(
                   'Daily-Ranking: Top 100 Spieler und Top 25 Allianzen'
@@ -2494,8 +2535,123 @@
         });
 
 
-        dailyContent.add(
+        dailyHeader.add(
             dailyInfoLabel
+        );
+
+
+        const dailySearchSpacer =
+              new qx.ui.core.Spacer();
+
+        dailyHeader.add(
+            dailySearchSpacer,
+            {
+                flex: 1
+            }
+        );
+
+
+        // -----------------------------------------------------
+        // Spielersuche im Daily-Ranking
+        // -----------------------------------------------------
+
+        const dailySearchLabel =
+              new qx.ui.basic.Label(
+                  'Spieler:'
+              );
+
+
+        const dailySearchField =
+              new qx.ui.form.TextField();
+
+        dailySearchField.set({
+            width: 180,
+            height: 26
+        });
+
+        // -----------------------------------------------------
+        // Suchfeld löschen
+        // -----------------------------------------------------
+
+        const dailySearchClearButton =
+              new qx.ui.form.Button(
+                  '×'
+              );
+
+        dailySearchClearButton.set({
+            width: 22,
+            height: 26,
+            textColor: '#ff4444',
+            font: 'bold'
+        });
+
+        dailySearchClearButton.setVisibility(
+            'excluded'
+        );
+        const dailySearchButton =
+              new qx.ui.form.Button(
+                  'Suchen'
+              );
+
+        dailySearchButton.set({
+            width: 75,
+            height: 26
+        });
+
+
+        dailyHeader.add(
+            dailySearchLabel
+        );
+
+        dailyHeader.add(
+            dailySearchField
+        );
+
+        dailyHeader.add(
+            dailySearchClearButton
+        );
+
+        dailySearchClearButton.addListener(
+            'execute',
+            function () {
+
+                dailySearchField.setValue('');
+
+                dailySearchClearButton.setVisibility(
+                    'excluded'
+                );
+
+                dailySearchField.focus();
+
+            }
+        );
+
+
+        dailySearchField.addListener(
+            'input',
+            function () {
+
+                const value =
+                      String(
+                          dailySearchField.getValue() || ''
+                      );
+
+                dailySearchClearButton.setVisibility(
+                    value.length > 0
+                    ? 'visible'
+                    : 'excluded'
+                );
+
+            }
+        );
+
+        dailyHeader.add(
+            dailySearchButton
+        );
+
+
+        dailyContent.add(
+            dailyHeader
         );
 
 
@@ -2518,7 +2674,7 @@
 
 
         dailyPlayerModel =
-              new qx.ui.table.model.Simple();
+            new qx.ui.table.model.Simple();
 
         dailyPlayerModel.setColumns([
             'Rang',
@@ -2547,7 +2703,169 @@
             dailyPlayerTable
         );
 
+        // =====================================================
+        // SPIELERSUCHE DAILY-RANKING
+        // =====================================================
 
+        dailySearchButton.addListener(
+            'execute',
+            function () {
+
+                const searchText =
+                      String(
+                          dailySearchField.getValue() || ''
+                      )
+                .trim()
+                .toLowerCase();
+
+
+
+                // -------------------------------------------------
+                // Leere Suche
+                // -------------------------------------------------
+
+                if (!searchText) {
+
+                    log.warning(
+                        'Bitte einen Spielernamen eingeben.'
+                    );
+
+                    return;
+                }
+
+
+                // -------------------------------------------------
+                // Spieler im Daily-Ranking suchen
+                // -------------------------------------------------
+
+                let foundIndex = -1;
+
+                const rowCount =
+                      dailyPlayerModel.getRowCount();
+
+
+                // Exakter Treffer
+
+                for (
+                    let i = 0;
+                    i < rowCount;
+                    i++
+                ) {
+
+                    const playerName =
+                          String(
+                              dailyPlayerModel.getValue(
+                                  1,
+                                  i
+                              ) || ''
+                          )
+                    .trim()
+                    .toLowerCase();
+
+
+                    if (
+                        playerName === searchText
+                    ) {
+
+                        foundIndex = i;
+
+                        break;
+                    }
+                }
+
+
+                // -------------------------------------------------
+                // Teiltreffer
+                // -------------------------------------------------
+
+                if (foundIndex === -1) {
+
+                    for (
+                        let i = 0;
+                        i < rowCount;
+                        i++
+                    ) {
+
+                        const playerName =
+                              String(
+                                  dailyPlayerModel.getValue(
+                                      1,
+                                      i
+                                  ) || ''
+                              )
+                        .trim()
+                        .toLowerCase();
+
+
+                        if (
+                            playerName.includes(
+                                searchText
+                            )
+                        ) {
+
+                            foundIndex = i;
+
+                            break;
+                        }
+                    }
+                }
+
+
+                // -------------------------------------------------
+                // Kein Treffer
+                // -------------------------------------------------
+
+                if (foundIndex === -1) {
+
+                    log.warning(
+                        `Spieler "${dailySearchField.getValue()}" wurde im Daily-Ranking nicht gefunden.`
+            );
+
+                    return;
+                }
+
+
+                // -------------------------------------------------
+                // Treffer auswählen
+                // -------------------------------------------------
+
+                const selectionModel =
+                      dailyPlayerTable
+                .getSelectionModel();
+
+                selectionModel.setSelectionInterval(
+                    foundIndex,
+                    foundIndex
+                );
+
+
+                // -------------------------------------------------
+                // Zum Treffer scrollen
+                // -------------------------------------------------
+
+                const paneScroller =
+                      dailyPlayerTable.getPaneScroller(
+                          0
+                      );
+
+                paneScroller.setScrollY(
+                    Math.max(
+                        0,
+                        (foundIndex - 3) * 20
+                    )
+                );
+
+
+                // -------------------------------------------------
+                // Erfolgreiche Suche
+                // -------------------------------------------------
+
+                log.success(
+                    `Spieler "${dailyPlayerModel.getValue(1, foundIndex)}" im Daily-Ranking gefunden.`
+        );
+
+            }
+        );
         // -----------------------------------------------------
         // Allianz Daily-Ranking
         // -----------------------------------------------------
@@ -2568,7 +2886,7 @@
 
 
         dailyAllianceModel =
-              new qx.ui.table.model.Simple();
+            new qx.ui.table.model.Simple();
 
         dailyAllianceModel.setColumns([
             'Rang',
@@ -2606,8 +2924,8 @@
         // uns nicht auf die Standard-Themefarbe.
 
         function styleDailyTableHeaders(
-            table,
-            columnCount
+        table,
+         columnCount
         ) {
 
             const columnModel =
@@ -2671,17 +2989,17 @@
         dailyPlayerTable
             .getTableColumnModel()
             .setColumnWidth(
-                3,
-                125
-            );
+            3,
+            125
+        );
 
 
         dailyAllianceTable
             .getTableColumnModel()
             .setColumnWidth(
-                2,
-                125
-            );
+            2,
+            125
+        );
 
 
         // -----------------------------------------------------
@@ -2697,17 +3015,17 @@
         dailyPlayerTable
             .getTableColumnModel()
             .setDataCellRenderer(
-                5,
-                dailyChangeRenderer
-            );
+            5,
+            dailyChangeRenderer
+        );
 
 
         dailyAllianceTable
             .getTableColumnModel()
             .setDataCellRenderer(
-                4,
-                dailyChangeRenderer
-            );
+            4,
+            dailyChangeRenderer
+        );
 
 
         // -----------------------------------------------------
@@ -2726,18 +3044,18 @@
             const snapshotTime =
                   playerSnapshot &&
                   playerSnapshot.time
-                      ? playerSnapshot.time
-                      : (
-                          allianceSnapshot &&
-                          allianceSnapshot.time
-                              ? allianceSnapshot.time
-                              : ''
-                        );
+            ? playerSnapshot.time
+            : (
+                allianceSnapshot &&
+                allianceSnapshot.time
+                ? allianceSnapshot.time
+                : ''
+            );
 
 
             const snapshotHeader =
                   snapshotTime
-                      ? `Snapshot (${snapshotTime})`
+            ? `Snapshot (${snapshotTime})`
                       : 'Snapshot';
 
 
@@ -2824,26 +3142,26 @@
                         const aRank =
                               aData &&
                               typeof aData === 'object'
-                                  ? Number(aData.rank || 9999)
-                                  : (
-                                      currentPlayerMap[a]
-                                          ? Number(
-                                              currentPlayerMap[a].r || 9999
-                                            )
-                                          : 9999
-                                    );
+                        ? Number(aData.rank || 9999)
+                        : (
+                            currentPlayerMap[a]
+                            ? Number(
+                                currentPlayerMap[a].r || 9999
+                            )
+                            : 9999
+                        );
 
                         const bRank =
                               bData &&
                               typeof bData === 'object'
-                                  ? Number(bData.rank || 9999)
-                                  : (
-                                      currentPlayerMap[b]
-                                          ? Number(
-                                              currentPlayerMap[b].r || 9999
-                                            )
-                                          : 9999
-                                    );
+                        ? Number(bData.rank || 9999)
+                        : (
+                            currentPlayerMap[b]
+                            ? Number(
+                                currentPlayerMap[b].r || 9999
+                            )
+                            : 9999
+                        );
 
                         return aRank - bRank;
                     }
@@ -2852,113 +3170,113 @@
 
                 const playerRows =
                       playerNames
-                      .slice(0, 100)
-                      .map(
-                          function (playerName) {
+                .slice(0, 100)
+                .map(
+                    function (playerName) {
 
-                              const saved =
-                                    playerSnapshot.players[
-                                        playerName
-                                    ];
-
-                              const savedIsObject =
-                                    saved &&
-                                    typeof saved === 'object';
-
-                              const snapshotPoints =
-                                    savedIsObject
-                                        ? Number(
-                                            saved.points || 0
-                                          )
-                                        : Number(saved || 0);
-
-                              const current =
-                                    currentPlayerMap[
-                                        playerName
-                                    ];
-
-                              const currentPoints =
-                                    current
-                                        ? Number(
-                                            current.s || 0
-                                          )
-                                        : null;
-
-                              let changeText =
-                                  '<span style="color:#888888;font-weight:bold;">—</span>';
-
-                              if (
-                                  currentPoints !== null
-                              ) {
-
-                                  const difference =
-                                        currentPoints -
-                                        snapshotPoints;
-
-                                  if (difference > 0) {
-
-                                      changeText =
-                                          '<span style="color:#00cc66;font-weight:bold;">▲ ' +
-                                          difference.toLocaleString(
-                                              'de-DE'
-                                          ) +
-                                          '</span>';
-
-                                  } else if (
-                                      difference < 0
-                                  ) {
-
-                                      changeText =
-                                          '<span style="color:#ff4444;font-weight:bold;">▼ ' +
-                                          Math.abs(
-                                              difference
-                                          ).toLocaleString(
-                                              'de-DE'
-                                          ) +
-                                          '</span>';
-                                  }
-                              }
-
-
-                              return [
-
-                                  savedIsObject
-                                      ? Number(saved.rank || '')
-                                      : (
-                                          current
-                                              ? current.r
-                                              : ''
-                                        ),
-
-                                  playerName,
-
-                                  savedIsObject
-                                      ? (
-                                          saved.alliance ||
-                                          (current
-                                              ? current.an
-                                              : '-')
-                                        )
-                                      : (
-                                          current
-                                              ? current.an
-                                              : '-'
-                                        ),
-
-                                  snapshotPoints.toLocaleString(
-                                      'de-DE'
-                                  ),
-
-                                  currentPoints === null
-                                      ? '—'
-                                      : currentPoints.toLocaleString(
-                                          'de-DE'
-                                        ),
-
-                                  changeText
+                        const saved =
+                              playerSnapshot.players[
+                                  playerName
                               ];
-                          }
-                      );
+
+                        const savedIsObject =
+                              saved &&
+                              typeof saved === 'object';
+
+                        const snapshotPoints =
+                              savedIsObject
+                        ? Number(
+                            saved.points || 0
+                        )
+                        : Number(saved || 0);
+
+                        const current =
+                              currentPlayerMap[
+                                  playerName
+                              ];
+
+                        const currentPoints =
+                              current
+                        ? Number(
+                            current.s || 0
+                        )
+                        : null;
+
+                        let changeText =
+                            '<span style="color:#888888;font-weight:bold;">—</span>';
+
+                        if (
+                            currentPoints !== null
+                        ) {
+
+                            const difference =
+                                  currentPoints -
+                                  snapshotPoints;
+
+                            if (difference > 0) {
+
+                                changeText =
+                                    '<span style="color:#00cc66;font-weight:bold;">▲ ' +
+                                    difference.toLocaleString(
+                                    'de-DE'
+                                ) +
+                                    '</span>';
+
+                            } else if (
+                                difference < 0
+                            ) {
+
+                                changeText =
+                                    '<span style="color:#ff4444;font-weight:bold;">▼ ' +
+                                    Math.abs(
+                                    difference
+                                ).toLocaleString(
+                                    'de-DE'
+                                ) +
+                                    '</span>';
+                            }
+                        }
+
+
+                        return [
+
+                            savedIsObject
+                            ? Number(saved.rank || '')
+                            : (
+                                current
+                                ? current.r
+                                : ''
+                            ),
+
+                            playerName,
+
+                            savedIsObject
+                            ? (
+                                saved.alliance ||
+                                (current
+                                 ? current.an
+                                 : '-')
+                            )
+                            : (
+                                current
+                                ? current.an
+                                : '-'
+                            ),
+
+                            snapshotPoints.toLocaleString(
+                                'de-DE'
+                            ),
+
+                            currentPoints === null
+                            ? '—'
+                            : currentPoints.toLocaleString(
+                                'de-DE'
+                            ),
+
+                            changeText
+                        ];
+                    }
+                );
 
 
                 dailyPlayerModel.setData(
@@ -3025,26 +3343,26 @@
                         const aRank =
                               aData &&
                               typeof aData === 'object'
-                                  ? Number(aData.rank || 9999)
-                                  : (
-                                      currentAllianceMap[a]
-                                          ? Number(
-                                              currentAllianceMap[a].r || 9999
-                                            )
-                                          : 9999
-                                    );
+                        ? Number(aData.rank || 9999)
+                        : (
+                            currentAllianceMap[a]
+                            ? Number(
+                                currentAllianceMap[a].r || 9999
+                            )
+                            : 9999
+                        );
 
                         const bRank =
                               bData &&
                               typeof bData === 'object'
-                                  ? Number(bData.rank || 9999)
-                                  : (
-                                      currentAllianceMap[b]
-                                          ? Number(
-                                              currentAllianceMap[b].r || 9999
-                                            )
-                                          : 9999
-                                    );
+                        ? Number(bData.rank || 9999)
+                        : (
+                            currentAllianceMap[b]
+                            ? Number(
+                                currentAllianceMap[b].r || 9999
+                            )
+                            : 9999
+                        );
 
                         return aRank - bRank;
                     }
@@ -3053,100 +3371,100 @@
 
                 const allianceRows =
                       allianceNames
-                      .slice(0, 25)
-                      .map(
-                          function (allianceName) {
+                .slice(0, 25)
+                .map(
+                    function (allianceName) {
 
-                              const saved =
-                                    allianceSnapshot.alliances[
-                                        allianceName
-                                    ];
-
-                              const savedIsObject =
-                                    saved &&
-                                    typeof saved === 'object';
-
-                              const snapshotPoints =
-                                    savedIsObject
-                                        ? Number(
-                                            saved.top40 || 0
-                                          )
-                                        : Number(saved || 0);
-
-                              const current =
-                                    currentAllianceMap[
-                                        allianceName
-                                    ];
-
-                              const currentPoints =
-                                    current
-                                        ? Number(
-                                            current.s || 0
-                                          )
-                                        : null;
-
-                              let changeText =
-                                  '<span style="color:#888888;font-weight:bold;">—</span>';
-
-                              if (
-                                  currentPoints !== null
-                              ) {
-
-                                  const difference =
-                                        currentPoints -
-                                        snapshotPoints;
-
-                                  if (difference > 0) {
-
-                                      changeText =
-                                          '<span style="color:#00cc66;font-weight:bold;">▲ ' +
-                                          difference.toLocaleString(
-                                              'de-DE'
-                                          ) +
-                                          '</span>';
-
-                                  } else if (
-                                      difference < 0
-                                  ) {
-
-                                      changeText =
-                                          '<span style="color:#ff4444;font-weight:bold;">▼ ' +
-                                          Math.abs(
-                                              difference
-                                          ).toLocaleString(
-                                              'de-DE'
-                                          ) +
-                                          '</span>';
-                                  }
-                              }
-
-
-                              return [
-
-                                  savedIsObject
-                                      ? Number(saved.rank || '')
-                                      : (
-                                          current
-                                              ? current.r
-                                              : ''
-                                        ),
-
-                                  allianceName,
-
-                                  snapshotPoints.toLocaleString(
-                                      'de-DE'
-                                  ),
-
-                                  currentPoints === null
-                                      ? '—'
-                                      : currentPoints.toLocaleString(
-                                          'de-DE'
-                                        ),
-
-                                  changeText
+                        const saved =
+                              allianceSnapshot.alliances[
+                                  allianceName
                               ];
-                          }
-                      );
+
+                        const savedIsObject =
+                              saved &&
+                              typeof saved === 'object';
+
+                        const snapshotPoints =
+                              savedIsObject
+                        ? Number(
+                            saved.top40 || 0
+                        )
+                        : Number(saved || 0);
+
+                        const current =
+                              currentAllianceMap[
+                                  allianceName
+                              ];
+
+                        const currentPoints =
+                              current
+                        ? Number(
+                            current.s || 0
+                        )
+                        : null;
+
+                        let changeText =
+                            '<span style="color:#888888;font-weight:bold;">—</span>';
+
+                        if (
+                            currentPoints !== null
+                        ) {
+
+                            const difference =
+                                  currentPoints -
+                                  snapshotPoints;
+
+                            if (difference > 0) {
+
+                                changeText =
+                                    '<span style="color:#00cc66;font-weight:bold;">▲ ' +
+                                    difference.toLocaleString(
+                                    'de-DE'
+                                ) +
+                                    '</span>';
+
+                            } else if (
+                                difference < 0
+                            ) {
+
+                                changeText =
+                                    '<span style="color:#ff4444;font-weight:bold;">▼ ' +
+                                    Math.abs(
+                                    difference
+                                ).toLocaleString(
+                                    'de-DE'
+                                ) +
+                                    '</span>';
+                            }
+                        }
+
+
+                        return [
+
+                            savedIsObject
+                            ? Number(saved.rank || '')
+                            : (
+                                current
+                                ? current.r
+                                : ''
+                            ),
+
+                            allianceName,
+
+                            snapshotPoints.toLocaleString(
+                                'de-DE'
+                            ),
+
+                            currentPoints === null
+                            ? '—'
+                            : currentPoints.toLocaleString(
+                                'de-DE'
+                            ),
+
+                            changeText
+                        ];
+                    }
+                );
 
 
                 dailyAllianceModel.setData(
@@ -3168,12 +3486,6 @@
         );
 
 
-        dailyContent.setVisibility(
-            'excluded'
-        );
-
-
-        updateSnapshotStatusLabel();
 
 
         // =====================================================
@@ -3193,8 +3505,74 @@
         );
 
         rankingContent.setVisibility(
-            'visible'
+            'excluded'
         );
+
+        // =====================================================
+        // STARTANSICHT
+        // =====================================================
+
+        if (startView === 'daily') {
+
+            rangeContainer.setVisibility(
+                'excluded'
+            );
+
+            snapshotContainer.setVisibility(
+                'visible'
+            );
+
+            rankingContent.setVisibility(
+                'excluded'
+            );
+
+            dailyContent.setVisibility(
+                'visible'
+            );
+
+            updateSnapshotStatusLabel();
+
+            requestDailyPlayerRanking(
+                function (players) {
+
+                    dailyCurrentPlayers =
+                        players || [];
+
+                    renderDailyRanking();
+                }
+            );
+
+            requestDailyAllianceRanking(
+                function (alliances) {
+
+                    dailyCurrentAlliances =
+                        alliances || [];
+
+                    renderDailyRanking();
+                }
+            );
+
+            renderDailyRanking();
+
+        } else {
+
+            rangeContainer.setVisibility(
+                'visible'
+            );
+
+            snapshotContainer.setVisibility(
+                'excluded'
+            );
+
+            dailyContent.setVisibility(
+                'excluded'
+            );
+
+            rankingContent.setVisibility(
+                'visible'
+            );
+
+        }
 
         // =====================================================
         // TABELLENMODELL
@@ -3394,45 +3772,45 @@
                         `Spieler "${searchField.getValue()}" wurde im aktuellen Rangbereich nicht gefunden.`
             );
 
-            return;
-        }
+                    return;
+                }
 
-        // -------------------------------------------------
-        // Treffer auswählen
-        // -------------------------------------------------
+                // -------------------------------------------------
+                // Treffer auswählen
+                // -------------------------------------------------
 
-        const selectionModel =
-              rankingTable.getSelectionModel();
+                const selectionModel =
+                      rankingTable.getSelectionModel();
 
-        selectionModel.setSelectionInterval(
-            foundIndex,
-            foundIndex
+                selectionModel.setSelectionInterval(
+                    foundIndex,
+                    foundIndex
+                );
+
+
+                // -------------------------------------------------
+                // Zum Treffer scrollen
+                // -------------------------------------------------
+
+                const paneScroller =
+                      rankingTable.getPaneScroller(
+                          0
+                      );
+
+                paneScroller.setScrollY(
+                    foundIndex * 25
+                );
+
+
+                // -------------------------------------------------
+                // Erfolgreiche Suche
+                // -------------------------------------------------
+
+                log.success(
+                    `Spieler "${players[foundIndex].pn}" gefunden – Rang ${players[foundIndex].r}.`
         );
 
-
-        // -------------------------------------------------
-        // Zum Treffer scrollen
-        // -------------------------------------------------
-
-        const paneScroller =
-              rankingTable.getPaneScroller(
-                  0
-              );
-
-        paneScroller.setScrollY(
-            foundIndex * 25
-        );
-
-
-        // -------------------------------------------------
-        // Erfolgreiche Suche
-        // -------------------------------------------------
-
-        log.success(
-            `Spieler "${players[foundIndex].pn}" gefunden – Rang ${players[foundIndex].r}.`
-        );
-
-    }
+            }
         );
         rankingTable.set({
 
@@ -3612,7 +3990,7 @@
     // Player RANKING ABRUFEN
     // =========================================================
 
-    function requestPlayerRanking() {
+    function requestPlayerRanking(startView) {
 
         log.section(
             'SPIELER-RANKING ABRUF'
@@ -3712,7 +4090,8 @@
 
 
                         showRanking(
-                            data.p
+                            data.p,
+                            startView
                         );
                     }
                 ),
@@ -3966,7 +4345,7 @@
                     );
 
 
-                    requestPlayerRanking();
+                    requestPlayerRanking('daily');
                 },
 
                 this
