@@ -74,7 +74,7 @@ direkt aus diesem Repository heruntergeladen und in Tampermonkey installiert wer
 
 ## 📌 Version
 
-**Version 1.5.14**
+**Version 1.5.18**
 
 ## 👨‍💻 Autor
 
