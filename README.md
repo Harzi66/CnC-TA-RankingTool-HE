@@ -54,8 +54,11 @@ direkt aus diesem Repository heruntergeladen und in Tampermonkey installiert wer
 
 ## Vorschau
 
-
-
+<p>
+  <img src="Screenshot_1.png" width="30%">
+  <img src="Screenshot_2.png" width="30%">
+  <img src="Screenshot_3.png" width="30%">
+</p>
 
 
 ## 📌 Version
