@@ -11,38 +11,27 @@ Das RankingTool erweitert das Spiel um eine übersichtliche Darstellung des Spie
 - Anzeige des Spieler-Rankings
 - Frei einstellbarer Rangbereich
 - Rangbereich bis maximal **1000**
-- Einstellung bleibt nach einem Neustart gespeichert
-- Aktualisierung des Rankings und Vergleich nach jedem Neustart des Scripts
+- Aktualisierung des Rankings und Vergleich nach Snapshot
 - Anzeige der Spielerpunkte
 - Anzeige der Punktentwicklung
-- Farbliche Kennzeichnung der Punktetendenz seit letztem Neustart des Scripts
+- Farbliche Kennzeichnung der Punktetendenz seit letztem Snapshot
 - Spielersuche innerhalb des aktuell eingestellten Rangbereichs
 - Automatisches Springen zum gefundenen Spieler
 
 ### 🏰 Allianz-Ranking
 
 - Anzeige des Allianz-Rankings
-- Anzeige der Punkte der besten 40 Spieler einer Allianz
-- Anzeige der Gesamtpunkte der Allianz
-- Aktualisierung des Rankings und Vergleich nach jedem Neustart des Scripts
-- Farbliche Kennzeichnung der Punktetendenz seit letztem Neustart des Scripts
-
-### 🏰 Daily-Ranking
-
-- Anzeige des Allianz-Rankings nach automatisch oder manuell ausgelösten Snapshots
-- Anzeige des Spieler-Rankings nach automatisch oder manuell ausgelösten Snapshots
-- Einstellbare Snapshot Zeiten (werden automatisch erstellt wenn man im Spiel ist)
-- Manuelle Snapshot Auslösung
-- Automatische Snapshot Auslösung
-- Anzeige der Punktentwicklung seit Snapchat
-- Farbliche Kennzeichnung der Punktetendenz
+- Anzeige der Top 40 - Punkte der besten 25 Allianzen
+- Farbliche Kennzeichnung der Punktetendenz seit letztem Snapshot des Skripts
 
 ### ⚙️ Weitere Funktionen
 
+- Einstellungen bleiben nach einem Neustart gespeichert
+- Sprache bei Verwendung in Deutsch, Englisch, Französisch und Spanisch enstellbar
 - Eigenes RankingTool-Symbol im Tampermonkey-Menü
 - Integration in das C&C-TA-Scripte-Menü
-- Einstellungen werden automatisch gespeichert
 - Übersichtliche Darstellung innerhalb des Spiels
+- Skript enthält Tooltips
 
 ## 📥 Installation
 
@@ -74,7 +63,7 @@ direkt aus diesem Repository heruntergeladen und in Tampermonkey installiert wer
 
 ## 📌 Version
 
-**Version 1.5.18**
+**Version 1.5.25**
 
 ## 👨‍💻 Autor
 
