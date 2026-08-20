@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CnC-TA RankingTool - HE
 // @namespace    Harzi
-// @version      1.5.18
+// @version      1.5.25
 // @description  C&C-TA Spieler-, Allianz- und Daily-Ranking mit Rangbereich, Spielersuche und Tages-Snapshot
 // @icon         https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/rankingtool-icon.png
 // @downloadURL  https://raw.githubusercontent.com/Harzi66/CnC-TA-RankingTool-HE/main/CnC-TA-RankingTool-HE.user.js
@@ -11,15 +11,231 @@
 // @grant        none
 // ==/UserScript==
 
-// Neu in Version 1.5.18
-// Startreihenfolge neu festgelegt
-// Tooltips hinzugefügt
-// Spielersuche in Bereich "Daily-Snapshot" hinzugefpgt
-// Löschbutton für Sucheintrag hinzugefügt
-// verschiedene Textanpassungen
+// Neu in Version 1.5.25
+// Bereiche Spieler-Ranking & Allianz-Ranking entfernt
+// Spieler-Ranking auf 1000 erhöht.
+// Neue Funktion "Startspieler" hinzugefügt
+// Neue Funktion "Startrange" hinzugefügt
+// Tooltipps für die neuen Bereiche erstellt.
+// Implementierung von Englisch, Französich und Spanisch
 
 (function () {
     'use strict';
+
+    const translations = {
+
+        de: {
+            startPlayer: ('Startspieler'),
+            fromRank: 'Von Rang:',
+            toRank: 'Bis Rang:',
+            update: 'Aktualisieren',
+            save: 'Speichern',
+            player: 'Spieler:',
+            search: 'Suchen',
+            dailyRanking:
+            'Daily-Ranking: Einstellbar bis Top 1000 Spieler und Top 25 Allianzen',
+            playersTop: 'Spieler – Top 1000',
+            alliancesTop: 'Allianzen – Top 25',
+            playerRange: 'Spieler – Rangbereich',
+            rank: 'Rang',
+            playerColumn: 'Spieler',
+            allianceColumn: 'Allianz',
+            snapshot: 'Snapshot',
+            currentPoints: 'Punkte aktuell',
+            change: 'Änderung',
+            automatic: 'Automatik',
+            automaticActive: 'Automatik aktiv',
+            automaticInactive: 'Automatik inaktiv',
+            time: 'Uhrzeit:',
+            snapshotNow: 'Snapshot jetzt',
+            lastSnapshot: 'Letzter Snapshot:',
+            automaticTooltip:
+            'Automatischer Tages-Snapshot <br>' +
+            'zur eingestellten Uhrzeit<br>' +
+            'aktivieren/deaktivieren.',
+            timeTooltip:
+            'Uhrzeit festlegen, zu der der automatische <br>' +
+            'Tages-Snapshot ausgelöst wird.',
+            saveTooltip:
+            'Auslösen eines automatischen Snapshot zur eingestellten Uhrzeit.<br>' +
+            '<span style="color:red; font-weight:bold;">Achtung!</span> ' +
+            'Du musst zur eingestellten Auslösezeit im Spiel sein!',
+            snapshotNowTooltip:
+            'Es wird ein sofortiger Snapshot ausgeführt,<br>' +
+            'welcher bis zur erneuten manuellen oder automatischen Auslösung gespeichert wird.',
+            updateTooltip:
+            'Aktualisiert das Daily-Ranking mit dem eingestellten Rangbereich und speichert diesen für den nächsten Start.',
+            startPlayerTooltip:
+            'Gibt den Spieler an, zu dem beim Öffnen des Daily-Rankings automatisch gesprungen wird.<br>' +
+            '<span style="color:red; font-weight:bold;">Achtung!</span> ' +
+            'Der Spieler muss innerhalb des gewählten Rangebereichs liegen. ' +
+            'Erfolgt keine Angabe oder ist der Spieler außerhalb des Rangebereichs, wird zu Rang 1 gesprungen.',
+
+        },
+
+        en: {
+            startPlayer: 'Start player:',
+            fromRank: 'From rank:',
+            toRank: 'To rank:',
+            update: 'Update',
+            save: 'Save',
+            player: 'Player:',
+            search: 'Search',
+            dailyRanking:
+            'Daily Ranking: Adjustable up to Top 1000 Players and Top 25 Alliances',
+            playersTop: 'Players – Top 1000',
+            alliancesTop: 'Alliances – Top 25',
+            playerRange: 'Players – Rank range',
+            rank: 'Rank',
+            playerColumn: 'Player',
+            allianceColumn: 'Alliance',
+            snapshot: 'Snapshot',
+            currentPoints: 'Current points',
+            change: 'Change',
+            automatic: 'Automatic',
+            automaticActive: 'Automatic active',
+            automaticInactive: 'Automatic inactive',
+            time: 'Time:',
+            snapshotNow: 'Snapshot now',
+            lastSnapshot: 'Last snapshot:',
+            automaticTooltip:
+            'Automatic daily snapshot<br>' +
+            'at the set time<br>' +
+            'enable/disable.',
+            timeTooltip:
+            'Set the time at which the automatic <br>' +
+            'daily snapshot is triggered.',
+            saveTooltip:
+            'Triggers an automatic snapshot at the set time.<br>' +
+            '<span style="color:red; font-weight:bold;">Warning!</span> ' +
+            'You must be in the game at the scheduled trigger time!',
+            snapshotNowTooltip:
+            'An immediate snapshot is performed,<br>' +
+            'which is saved until the next manual or automatic trigger.',
+            updateTooltip:
+            'Updates the Daily Ranking with the selected rank range and saves it for the next start.',
+            startPlayerTooltip:
+            'Specifies the player to jump to when opening the Daily Ranking.<br>' +
+            '<span style="color:red; font-weight:bold;">Warning!</span> ' +
+            'The player must be within the selected rank range. ' +
+            'If no player is specified or the player is outside the rank range, rank 1 is selected.',
+
+        },
+
+        fr: {
+            startPlayer: 'Joueur de départ :',
+            fromRank: 'Du rang :',
+            toRank: 'Au rang :',
+            update: 'Actualiser',
+            save: 'Enregistrer',
+            player: 'Joueur :',
+            search: 'Rechercher',
+            dailyRanking:
+            'Classement quotidien : réglable jusqu’aux 1000 meilleurs joueurs et 25 meilleures alliances',
+            playersTop: 'Joueurs – Top 1000',
+            alliancesTop: 'Alliances – Top 25',
+            playerRange: 'Joueurs – Plage de classement',
+            rank: 'Rang',
+            playerColumn: 'Joueur',
+            allianceColumn: 'Alliance',
+            snapshot: 'Snapshot',
+            currentPoints: 'Points actuels',
+            change: 'Variation',
+            automatic: 'Automatique',
+            automaticActive: 'Automatique active',
+            automaticInactive: 'Automatique inactive',
+            time: 'Heure :',
+            snapshotNow: 'Snapshot maintenant',
+            lastSnapshot: 'Dernier snapshot :',
+            automaticTooltip:
+            'Snapshot quotidien automatique<br>' +
+            'à l’heure définie<br>' +
+            'activer/désactiver.',
+            timeTooltip:
+            'Définir l’heure à laquelle le <br>' +
+            'snapshot quotidien automatique est déclenché.',
+            saveTooltip:
+            'Déclenche un snapshot automatique à l’heure définie.<br>' +
+            '<span style="color:red; font-weight:bold;">Attention !</span> ' +
+            'Tu dois être dans le jeu à l’heure du déclenchement !',
+            snapshotNowTooltip:
+            'Un snapshot immédiat est effectué,<br>' +
+            'et conservé jusqu’au prochain déclenchement manuel ou automatique.',
+            updateTooltip:
+            'Actualise le classement quotidien avec la plage de classement sélectionnée et l’enregistre pour le prochain démarrage.',
+            startPlayerTooltip:
+            'Indique le joueur vers lequel accéder automatiquement à l’ouverture du classement quotidien.<br>' +
+            '<span style="color:red; font-weight:bold;">Attention !</span> ' +
+            'Le joueur doit se trouver dans la plage de classement sélectionnée. ' +
+            'Si aucun joueur n’est indiqué ou si le joueur est en dehors de la plage, le rang 1 est sélectionné.',
+
+        },
+
+        es: {
+            startPlayer: 'Jugador inicial:',
+            fromRank: 'Desde rango:',
+            toRank: 'Hasta rango:',
+            update: 'Actualizar',
+            save: 'Guardar',
+            player: 'Jugador:',
+            search: 'Buscar',
+            dailyRanking:
+            'Clasificación diaria: configurable hasta los 1000 mejores jugadores y las 25 mejores alianzas',
+            playersTop: 'Jugadores – Top 1000',
+            alliancesTop: 'Alianzas – Top 25',
+            playerRange: 'Jugadores – Rango',
+            rank: 'Rango',
+            playerColumn: 'Jugador',
+            allianceColumn: 'Alianza',
+            snapshot: 'Snapshot',
+            currentPoints: 'Puntos actuales',
+            change: 'Cambio',
+            automatic: 'Automático',
+            automaticActive: 'Automático activo',
+            automaticInactive: 'Automático inactivo',
+            time: 'Hora:',
+            snapshotNow: 'Snapshot ahora',
+            lastSnapshot: 'Último snapshot:',
+            automaticTooltip:
+            'Snapshot diario automático<br>' +
+            'a la hora establecida<br>' +
+            'activar/desactivar.',
+            timeTooltip:
+            'Establecer la hora a la que se activa <br>' +
+            'el snapshot diario automático.',
+            saveTooltip:
+            'Activa un snapshot automático a la hora establecida.<br>' +
+            '<span style="color:red; font-weight:bold;">¡Atención!</span> ' +
+            'Debes estar en el juego a la hora programada.',
+            snapshotNowTooltip:
+            'Se realiza un snapshot inmediato,<br>' +
+            'que se conserva hasta la próxima activación manual o automática.',
+            updateTooltip:
+            'Actualiza la clasificación diaria con el rango seleccionado y lo guarda para el próximo inicio.',
+            startPlayerTooltip:
+            'Indica el jugador al que se accederá automáticamente al abrir la clasificación diaria.<br>' +
+            '<span style="color:red; font-weight:bold;">¡Atención!</span> ' +
+            'El jugador debe estar dentro del rango seleccionado. ' +
+            'Si no se indica ningún jugador o está fuera del rango, se selecciona el rango 1.',
+
+
+        }
+    };
+
+    function t(key) {
+
+        const language =
+              localStorage.getItem(
+                  'HCTAT_DailyRanking_Language'
+              ) || 'de';
+
+        return (
+            translations[language] &&
+            translations[language][key]
+        ) ||
+            translations.de[key] ||
+            key;
+    }
 
     const scriptName = 'CnC-TA RankingTool - HE';
 
@@ -607,7 +823,7 @@
             const snapshotPlayers = {};
 
             players
-                .slice(0, 100)
+                .slice(0, 1000)
                 .forEach(
                 function (player) {
 
@@ -854,15 +1070,14 @@
         if (!snapshot) {
 
             snapshotStatusLabel.setValue(
-                'Letzter Snapshot: noch keiner'
+                t('lastSnapshot') + ' noch keiner'
             );
-
             return;
         }
 
 
         snapshotStatusLabel.setValue(
-            `Letzter Snapshot: ${snapshot.date} ${snapshot.time}`
+            `${t('lastSnapshot')} ${snapshot.date} ${snapshot.time}`
         );
     }
 
@@ -904,7 +1119,7 @@
 
                     firstIndex: 0,
 
-                    lastIndex: 99,
+                    lastIndex: 999,
 
                     view: view,
 
@@ -968,7 +1183,7 @@
 
 
             log.info(
-                'RankingGetData für Top 100 wurde als Tages-Snapshot gesendet.'
+                'RankingGetData für Top 1000 wurde als Tages-Snapshot gesendet.'
             );
 
 
@@ -1094,7 +1309,7 @@
 
                 {
                     firstIndex: 0,
-                    lastIndex: 99,
+                    lastIndex: 999,
                     view: view,
                     rankingType: rankingType,
                     sortColumn: sortColumn,
@@ -1439,483 +1654,6 @@
             padding: 8
         });
 
-        // =====================================================
-        // RANKING-REITER
-        // =====================================================
-
-        const tabBar =
-              new qx.ui.container.Composite(
-                  new qx.ui.layout.HBox(4)
-              );
-
-
-        // -----------------------------------------------------
-        // Spieler-Ranking
-        // -----------------------------------------------------
-
-        const playerTab =
-              new qx.ui.form.Button(
-                  'Spieler-Ranking'
-              );
-
-        playerTab.set({
-            width: 150,
-            height: 28
-        });
-
-
-        playerTab.addListener(
-            'execute',
-            function () {
-
-                rangeContainer.setVisibility(
-                    'visible'
-                );
-
-                snapshotContainer.setVisibility(
-                    'excluded'
-                );
-
-                dailyContent.setVisibility(
-                    'excluded'
-                );
-
-                rankingContent.setVisibility(
-                    'visible'
-                );
-
-                requestPlayerRanking('player');
-
-            }
-        );
-
-
-        // -----------------------------------------------------
-        // Allianz-Ranking
-        // -----------------------------------------------------
-
-        const allianceTab =
-              new qx.ui.form.Button(
-                  'Allianz-Ranking'
-              );
-
-        allianceTab.set({
-            width: 150,
-            height: 28
-        });
-
-
-        // -----------------------------------------------------
-        // Daily-Ranking
-        // -----------------------------------------------------
-
-        const dailyTab =
-              new qx.ui.form.Button(
-                  'Daily-Ranking'
-              );
-
-        dailyTab.set({
-            width: 150,
-            height: 28
-        });
-
-
-        dailyTab.addListener(
-            'execute',
-            function () {
-
-                rangeContainer.setVisibility(
-                    'excluded'
-                );
-
-                snapshotContainer.setVisibility(
-                    'visible'
-                );
-
-                rankingContent.setVisibility(
-                    'excluded'
-                );
-
-                dailyContent.setVisibility(
-                    'visible'
-                );
-
-                updateSnapshotStatusLabel();
-
-                requestDailyPlayerRanking(
-                    function (players) {
-
-                        dailyCurrentPlayers =
-                            players || [];
-
-                        renderDailyRanking();
-                    }
-                );
-
-                requestDailyAllianceRanking(
-                    function (alliances) {
-
-                        dailyCurrentAlliances =
-                            alliances || [];
-
-                        renderDailyRanking();
-                    }
-                );
-
-                renderDailyRanking();
-
-            }
-        );
-
-
-        tabBar.add(playerTab);
-        tabBar.add(allianceTab);
-        tabBar.add(dailyTab);
-
-        allianceTab.addListener(
-            'execute',
-            function () {
-
-                rangeContainer.setVisibility(
-                    'excluded'
-                );
-
-                snapshotContainer.setVisibility(
-                    'excluded'
-                );
-
-                dailyContent.setVisibility(
-                    'excluded'
-                );
-
-                rankingContent.setVisibility(
-                    'visible'
-                );
-
-                requestAllianceRanking(
-                    function (alliances) {
-
-                        const previousAlliancePoints =
-                              loadPreviousAlliancePoints();
-
-                        // -------------------------------------------------
-                        // Vorhandene Anzeige entfernen
-                        // -------------------------------------------------
-
-                        rankingContent.removeAll();
-
-
-                        // -------------------------------------------------
-                        // Allianz-Tabelle
-                        // -------------------------------------------------
-
-                        const allianceModel =
-                              new qx.ui.table.model.Simple();
-
-
-                        allianceModel.setColumns([
-                            'Rang',
-                            'Allianz',
-                            'Top 40-Punkte',
-                            '',
-                            'Änderung',
-                            'Spieler',
-                            'Basen',
-                            'Gesamtpunkte',
-                            '',
-                            'Änderung'
-                        ]);
-
-
-                        const allianceData =
-                              alliances.map(
-                                  function (alliance) {
-
-                                      const change =
-                                            calculateAlliancePointChange(
-                                                alliance,
-                                                previousAlliancePoints
-                                            );
-
-
-                                      let top40Arrow = '—';
-                                      let top40Change = '';
-
-
-                                      if (
-                                          change.top40.type === 'up'
-                                      ) {
-
-                                          top40Arrow = '▲';
-
-                                          top40Change =
-                                              change.top40.value
-                                              .toLocaleString('de-DE');
-
-                                      }
-
-
-                                      if (
-                                          change.top40.type === 'down'
-                                      ) {
-
-                                          top40Arrow = '▼';
-
-                                          top40Change =
-                                              change.top40.value
-                                              .toLocaleString('de-DE');
-
-                                      }
-
-
-                                      let totalArrow = '—';
-                                      let totalChange = '';
-
-
-                                      if (
-                                          change.total.type === 'up'
-                                      ) {
-
-                                          totalArrow = '▲';
-
-                                          totalChange =
-                                              change.total.value
-                                              .toLocaleString('de-DE');
-
-                                      }
-
-
-                                      if (
-                                          change.total.type === 'down'
-                                      ) {
-
-                                          totalArrow = '▼';
-
-                                          totalChange =
-                                              change.total.value
-                                              .toLocaleString('de-DE');
-
-                                      }
-
-
-                                      return [
-
-                                          alliance.r,
-
-                                          alliance.an || '-',
-
-                                          Number(
-                                              alliance.s || 0
-                                          ).toLocaleString('de-DE'),
-
-                                          top40Arrow,
-
-                                          top40Change,
-
-                                          Number(
-                                              alliance.pc || 0
-                                          ).toLocaleString('de-DE'),
-
-                                          Number(
-                                              alliance.bc || 0
-                                          ).toLocaleString('de-DE'),
-
-                                          Number(
-                                              alliance.sc || 0
-                                          ).toLocaleString('de-DE'),
-
-                                          totalArrow,
-
-                                          totalChange
-
-                                      ];
-
-                                  }
-                              );
-
-                        allianceModel.setData(
-                            allianceData
-                        );
-
-
-                        // -------------------------------------------------
-                        // Tabelle erzeugen
-                        // -------------------------------------------------
-
-                        const allianceTable =
-                              new qx.ui.table.Table(
-                                  allianceModel
-                              );
-
-
-                        allianceTable.set({
-
-                            width: 730,
-
-                            height: 560,
-
-                            decorator: 'main',
-
-                            showCellFocusIndicator: false
-
-                        });
-
-
-                        // -------------------------------------------------
-                        // Spaltenbreiten
-                        // -------------------------------------------------
-
-                        const allianceColumnModel =
-                              allianceTable.getTableColumnModel();
-
-
-                        // Rang
-                        allianceColumnModel.setColumnWidth(
-                            0,
-                            45
-                        );
-
-
-                        // Allianz
-                        allianceColumnModel.setColumnWidth(
-                            1,
-                            135
-                        );
-
-
-                        // Top 40-Punkte
-                        allianceColumnModel.setColumnWidth(
-                            2,
-                            110
-                        );
-
-
-                        // Top 40 Pfeil
-                        allianceColumnModel.setColumnWidth(
-                            3,
-                            28
-                        );
-
-
-                        // Top 40 Änderung
-                        allianceColumnModel.setColumnWidth(
-                            4,
-                            70
-                        );
-
-
-                        // Spieler
-                        allianceColumnModel.setColumnWidth(
-                            5,
-                            55
-                        );
-
-
-                        // Basen
-                        allianceColumnModel.setColumnWidth(
-                            6,
-                            55
-                        );
-
-
-                        // Gesamtpunkte
-                        allianceColumnModel.setColumnWidth(
-                            7,
-                            115
-                        );
-
-
-                        // Gesamtpunkte Pfeil
-                        allianceColumnModel.setColumnWidth(
-                            8,
-                            28
-                        );
-
-
-                        // Gesamtpunkte Änderung
-                        allianceColumnModel.setColumnWidth(
-                            9,
-                            70
-                        );
-
-                        const allianceArrowRenderer =
-                              new qx.ui.table.cellrenderer.Default();
-
-                        allianceArrowRenderer._getCellStyle =
-                            function (cellInfo) {
-
-                            const value =
-                                  String(cellInfo.value || '');
-
-                            if (value === '▲') {
-
-                                return [
-                                    'color:#00cc66',
-                                    'font-weight:bold',
-                                    'text-align:center'
-                                ].join(';') + ';';
-                            }
-
-                            if (value === '▼') {
-
-                                return [
-                                    'color:#ff4444',
-                                    'font-weight:bold',
-                                    'text-align:center'
-                                ].join(';') + ';';
-                            }
-
-                            return [
-                                'color:#888888',
-                                'font-weight:bold',
-                                'text-align:center'
-                            ].join(';') + ';';
-                        };
-
-                        allianceColumnModel.setDataCellRenderer(
-                            3,
-                            allianceArrowRenderer
-                        );
-
-                        allianceColumnModel.setDataCellRenderer(
-                            8,
-                            allianceArrowRenderer
-                        );
-
-                        // -------------------------------------------------
-                        // Statuszeile
-                        // -------------------------------------------------
-
-                        allianceTable.setAdditionalStatusBarText(
-                            `${alliances.length} Allianzen angezeigt`
-                );
-
-
-                        // -------------------------------------------------
-                        // Tabelle anzeigen
-                        // -------------------------------------------------
-
-                        rankingContent.add(
-                            allianceTable,
-                            {
-                                flex: 1
-                            }
-                        );
-
-                        saveCurrentAlliancePoints(
-                            alliances
-                        );
-                    }
-                );
-
-            }
-        );
-
-        // Reiter oben einbauen
-        mainContainer.add(
-            tabBar
-        );
-
 
         // =====================================================
         // SPIELER-RANKING - RANGBEREICH
@@ -2189,7 +1927,7 @@
 
         const snapshotAutoCheckBox =
               new qx.ui.form.CheckBox(
-                  'Automatik'
+                  t('automatic')
               );
 
         snapshotAutoCheckBox.set({
@@ -2198,9 +1936,7 @@
 
         snapshotAutoCheckBox.setToolTipText(
             '<div style="width:180px; white-space:normal;">' +
-            'Automatischer Tages-Snapshot <br>' +
-            'zur eingestellten Uhrzeit<br>' +
-            'aktivieren/deaktivieren.' +
+            t('automaticTooltip') +
             '</div>'
         );
 
@@ -2242,8 +1978,8 @@
 
             snapshotAutoStatusLabel.setValue(
                 active
-                ? 'Automatik aktiv'
-                : 'Automatik inaktiv'
+                ? t('automaticActive')
+                : t('automaticInactive')
             );
 
             snapshotAutoStatusLabel.set({
@@ -2268,7 +2004,7 @@
 
         const snapshotTimeLabel =
               new qx.ui.basic.Label(
-                  'Uhrzeit:'
+                  t('time')
               );
 
         snapshotTimeLabel.set({
@@ -2289,14 +2025,13 @@
 
         snapshotTimeField.setToolTipText(
             '<div style="width:230px; white-space:normal;">' +
-            'Uhrzeit festlegen, zu der der automatische <br>' +
-            'Tages-Snapshot ausgelöst wird.' +
+            t('timeTooltip') +
             '</div>'
         );
 
         const snapshotSaveButton =
               new qx.ui.form.Button(
-                  'Speichern'
+                  t('save')
               );
 
 
@@ -2307,15 +2042,13 @@
 
         snapshotSaveButton.setToolTipText(
             '<div style="width:210px; white-space:normal;">' +
-            'Auslösen eines automatischen Snapshot zur eingestellten Uhrzeit.<br>' +
-            '<span style="color:red; font-weight:bold;">Achtung!</span> ' +
-            'Du musst zur eingestellten Auslösezeit im Spiel sein!' +
+            t('saveTooltip') +
             '</div>'
         );
 
         const snapshotNowButton =
               new qx.ui.form.Button(
-                  'Snapshot jetzt'
+                  t('snapshotNow')
               );
 
 
@@ -2326,8 +2059,7 @@
 
         snapshotNowButton.setToolTipText(
             '<div style="width:300px; white-space:normal;">' +
-            'Es wird ein sofortiger Snapshot ausgeführt,<br>' +
-            'welcher bis zur erneuten Auslösung gespeichert wird.' +
+            t('snapshotNowTooltip') +
             '</div>'
         );
 
@@ -2526,7 +2258,7 @@
 
         const dailyInfoLabel =
               new qx.ui.basic.Label(
-                  'Daily-Ranking: Top 100 Spieler und Top 25 Allianzen'
+                  t('dailyRanking')
               );
 
         dailyInfoLabel.set({
@@ -2557,8 +2289,12 @@
 
         const dailySearchLabel =
               new qx.ui.basic.Label(
-                  'Spieler:'
+                  t('player')
               );
+
+        dailySearchLabel.set({
+            textColor: '#ffff00'
+        });
 
 
         const dailySearchField =
@@ -2590,7 +2326,7 @@
         );
         const dailySearchButton =
               new qx.ui.form.Button(
-                  'Suchen'
+                  t('search')
               );
 
         dailySearchButton.set({
@@ -2654,6 +2390,525 @@
             dailyHeader
         );
 
+        // -----------------------------------------------------
+        // Gespeicherten Spieler-Rangbereich laden
+        // -----------------------------------------------------
+
+        const savedDailyFrom =
+              parseInt(
+                  localStorage.getItem(
+                      'HCTAT_DailyRanking_From'
+                  ),
+                  10
+              ) || 1;
+
+        const savedDailyTo =
+              parseInt(
+                  localStorage.getItem(
+                      'HCTAT_DailyRanking_To'
+                  ),
+                  10
+              ) || 1000;
+
+        // -----------------------------------------------------
+        // Spieler-Rangbereich im Daily-Ranking
+        // -----------------------------------------------------
+
+        const dailyRangeContainer =
+              new qx.ui.container.Composite(
+                  new qx.ui.layout.HBox(6)
+              );
+
+        const dailyRangeSpacer =
+              new qx.ui.core.Spacer();
+
+        dailyRangeContainer.add(
+            dailyRangeSpacer,
+            {
+                flex: 1
+            }
+        );
+
+        const dailyFromLabel =
+              new qx.ui.basic.Label(
+                  t('fromRank')
+              );
+
+        dailyFromLabel.set({
+            textColor: '#ffff00'
+        });
+
+        const dailyFromField =
+              new qx.ui.form.TextField(
+                  String(savedDailyFrom)
+              );
+
+        dailyFromField.set({
+            width: 55,
+            height: 26
+        });
+
+        const dailyToLabel =
+              new qx.ui.basic.Label(
+                  t('toRank')
+              );
+
+        dailyToLabel.set({
+            textColor: '#ffff00'
+        });
+
+        const dailyToField =
+              new qx.ui.form.TextField(
+                  String(savedDailyTo)
+              );
+
+        dailyToField.set({
+            width: 55,
+            height: 26
+        });
+
+        const dailyRangeButton =
+              new qx.ui.form.Button(
+                  t('update')
+              );
+
+        dailyRangeButton.set({
+            width: 85,
+            height: 26
+        });
+
+        dailyRangeButton.setToolTipText(
+            '<div style="width:300px; white-space:normal;">' +
+            t('updateTooltip') +
+            '</div>'
+        );
+
+        // -----------------------------------------------------
+        // Gespeicherter Startspieler
+        // -----------------------------------------------------
+
+        const savedDailyStartPlayer =
+              localStorage.getItem(
+                  'HCTAT_DailyRanking_StartPlayer'
+              ) || '';
+
+        const dailyStartPlayerLabel =
+              new qx.ui.basic.Label(
+                  t('startPlayer')
+              );
+
+        dailyStartPlayerLabel.set({
+            textColor: '#ffff00'
+        });
+
+        const dailyStartPlayerField =
+              new qx.ui.form.TextField(
+                  savedDailyStartPlayer
+              );
+
+        dailyStartPlayerField.set({
+            width: 120,
+            height: 26
+        });
+
+        dailyStartPlayerField.setToolTipText(
+            '<div style="width:300px; white-space:normal;">' +
+            t('startPlayerTooltip') +
+            '</div>'
+        );
+
+        const dailyStartPlayerButton =
+              new qx.ui.form.Button(
+                  t('save')
+              );
+
+        dailyStartPlayerButton.set({
+            width: 75,
+            height: 26
+        });
+
+
+        // -----------------------------------------------------
+        // Übersetzung abrufen
+        // -----------------------------------------------------
+
+        function t(key) {
+
+            const language =
+                  localStorage.getItem(
+                      'HCTAT_DailyRanking_Language'
+                  ) || 'de';
+
+            return (
+                translations[language] &&
+                translations[language][key]
+            ) ||
+                translations.de[key] ||
+                key;
+        }
+
+        // -----------------------------------------------------
+        // Sprachauswahl
+        // -----------------------------------------------------
+
+        const savedLanguage =
+              localStorage.getItem(
+                  'HCTAT_DailyRanking_Language'
+              ) || 'de';
+
+        const languageSelect =
+              new qx.ui.form.SelectBox();
+
+        const languageHeader =
+              new qx.ui.form.ListItem(
+                  'Language'
+              );
+
+        languageHeader.setEnabled(false);
+
+        const languageGerman =
+              new qx.ui.form.ListItem(
+                  'Deutsch'
+              );
+
+        const languageEnglish =
+              new qx.ui.form.ListItem(
+                  'English'
+              );
+
+        const languageFrench =
+              new qx.ui.form.ListItem(
+                  'Français'
+              );
+
+        const languageSpanish =
+              new qx.ui.form.ListItem(
+                  'Español'
+              );
+
+        const languageMap = {
+            de: languageGerman,
+            en: languageEnglish,
+            fr: languageFrench,
+            es: languageSpanish
+        };
+
+        languageSelect.add(
+            languageHeader
+        );
+
+        languageSelect.add(
+            languageGerman
+        );
+
+        languageSelect.add(
+            languageEnglish
+        );
+
+        languageSelect.add(
+            languageFrench
+        );
+
+        languageSelect.add(
+            languageSpanish
+        );
+
+        languageSelect.set({
+            width: 100,
+            height: 26
+        });
+
+        // Deutsch zunächst als Standard anzeigen
+
+        languageSelect.setSelection([
+            languageMap[savedLanguage] ||
+            languageHeader
+        ]);
+
+        dailyStartPlayerButton.addListener(
+            'execute',
+            function () {
+
+                const playerName =
+                      dailyStartPlayerField
+                .getValue()
+                .trim();
+
+                localStorage.setItem(
+                    'HCTAT_DailyRanking_StartPlayer',
+                    playerName
+                );
+            }
+        );
+
+
+        languageSelect.addListener(
+            'changeSelection',
+            function (e) {
+
+                const selection =
+                      e.getData();
+
+                if (
+                    !selection ||
+                    !selection.length ||
+                    selection[0] === languageHeader
+                ) {
+                    return;
+                }
+
+                let language = '';
+
+                if (selection[0] === languageGerman) {
+                    language = 'de';
+                } else if (
+                    selection[0] === languageEnglish
+                ) {
+                    language = 'en';
+                } else if (
+                    selection[0] === languageFrench
+                ) {
+                    language = 'fr';
+                } else if (
+                    selection[0] === languageSpanish
+                ) {
+                    language = 'es';
+                }
+
+                if (language) {
+
+                    localStorage.setItem(
+                        'HCTAT_DailyRanking_Language',
+                        language
+                    );
+
+                    setTimeout(
+                        function () {
+                            updateLanguageUI();
+                        },
+                        0
+                    );
+                }
+            }
+        );
+
+        // =====================================================
+        // SPRACHE SOFORT AKTUALISIEREN – TEST 1
+        // =====================================================
+
+        function updateLanguageUI() {
+
+            dailyInfoLabel.setValue(
+                t('dailyRanking')
+            );
+
+            dailyPlayerLabel.setValue(
+                t('playersTop')
+            );
+
+            dailyAllianceLabel.setValue(
+                t('alliancesTop')
+            );
+
+            dailyStartPlayerLabel.setValue(
+                t('startPlayer')
+            );
+
+            dailyFromLabel.setValue(
+                t('fromRank')
+            );
+
+            dailyToLabel.setValue(
+                t('toRank')
+            );
+
+            dailyRangeButton.setLabel(
+                t('update')
+            );
+
+            dailyStartPlayerButton.setLabel(
+                t('save')
+            );
+
+            dailySearchLabel.setValue(
+                t('player')
+            );
+
+            dailySearchButton.setLabel(
+                t('search')
+            );
+
+            snapshotAutoCheckBox.setLabel(
+                t('automatic')
+            );
+
+            snapshotTimeLabel.setValue(
+                t('time')
+            );
+
+            snapshotSaveButton.setLabel(
+                t('save')
+            );
+
+            snapshotNowButton.setLabel(
+                t('snapshotNow')
+            );
+
+            renderDailyRanking();
+
+            updateSnapshotStatusLabel();
+
+            updateSnapshotAutoStatusLabel();
+
+            snapshotAutoCheckBox.setToolTipText(
+                '<div style="width:180px; white-space:normal;">' +
+                t('automaticTooltip') +
+                '</div>'
+            );
+
+            snapshotTimeField.setToolTipText(
+                '<div style="width:230px; white-space:normal;">' +
+                t('timeTooltip') +
+                '</div>'
+            );
+
+            snapshotSaveButton.setToolTipText(
+                '<div style="width:230px; white-space:normal;">' +
+                t('saveTooltip') +
+                '</div>'
+            );
+
+            snapshotNowButton.setToolTipText(
+                '<div style="width:210px; white-space:normal;">' +
+                t('snapshotNowTooltip') +
+                '</div>'
+            );
+
+            dailyStartPlayerField.setToolTipText(
+                '<div style="width:300px; white-space:normal;">' +
+                t('startPlayerTooltip') +
+                '</div>'
+            );
+
+            dailyRangeButton.setToolTipText(
+                '<div style="width:300px; white-space:normal;">' +
+                t('updateTooltip') +
+                '</div>'
+            );
+
+        }
+
+        // =====================================================
+        dailyRangeButton.addListener(
+            'execute',
+            function () {
+
+                let from =
+                    parseInt(
+                        dailyFromField.getValue(),
+                        10
+                    );
+
+                let to =
+                    parseInt(
+                        dailyToField.getValue(),
+                        10
+                    );
+
+                if (isNaN(from)) {
+                    from = 1;
+                }
+
+                if (isNaN(to)) {
+                    to = 1000;
+                }
+
+                from = Math.max(
+                    1,
+                    Math.min(1000, from)
+                );
+
+                to = Math.max(
+                    1,
+                    Math.min(1000, to)
+                );
+
+                if (from > to) {
+                    const temp = from;
+                    from = to;
+                    to = temp;
+                }
+
+                dailyFromField.setValue(
+                    String(from)
+                );
+
+                dailyToField.setValue(
+                    String(to)
+                );
+
+                localStorage.setItem(
+                    'HCTAT_DailyRanking_From',
+                    String(from)
+                );
+
+                localStorage.setItem(
+                    'HCTAT_DailyRanking_To',
+                    String(to)
+                );
+
+                renderDailyRanking();
+            }
+        );
+
+        dailyRangeContainer.add(
+            dailyStartPlayerLabel
+        );
+
+        dailyRangeContainer.add(
+            dailyStartPlayerField
+        );
+
+        dailyRangeContainer.add(
+            dailyStartPlayerButton
+        );
+
+        dailyRangeContainer.add(
+            languageSelect
+        );
+
+        // Abstand zwischen den beiden Bereichen
+        dailyRangeContainer.add(
+            dailyRangeSpacer,
+            {
+                flex: 1
+            }
+        );
+
+
+        dailyRangeContainer.add(
+            dailyFromLabel
+        );
+
+        dailyRangeContainer.add(
+            dailyFromField
+        );
+
+        dailyRangeContainer.add(
+            dailyToLabel
+        );
+
+        dailyRangeContainer.add(
+            dailyToField
+        );
+
+        dailyRangeContainer.add(
+            dailyRangeButton
+        );
+
+        dailyContent.add(
+            dailyRangeContainer
+        );
 
         // -----------------------------------------------------
         // Spieler Daily-Ranking
@@ -2661,7 +2916,7 @@
 
         const dailyPlayerLabel =
               new qx.ui.basic.Label(
-                  'Spieler – Top 100'
+                  t('playersTop')
               );
 
         dailyPlayerLabel.set({
@@ -2677,12 +2932,12 @@
             new qx.ui.table.model.Simple();
 
         dailyPlayerModel.setColumns([
-            'Rang',
-            'Spieler',
-            'Allianz',
-            'Snapshot',
-            'Punkte aktuell',
-            'Änderung'
+            t('rank'),
+            t('playerColumn'),
+            t('allianceColumn'),
+            t('snapshot'),
+            t('currentPoints'),
+            t('change')
         ]);
 
 
@@ -2693,7 +2948,7 @@
 
         dailyPlayerTable.set({
             width: 730,
-            height: 210,
+            height: 240,
             decorator: 'main',
             showCellFocusIndicator: false
         });
@@ -2866,13 +3121,94 @@
 
             }
         );
+
+        // =====================================================
+        // Gespeicherten Startspieler automatisch anspringen
+        // =====================================================
+
+        function jumpToSavedDailyStartPlayer() {
+
+            const savedPlayer =
+                  localStorage.getItem(
+                      'HCTAT_DailyRanking_StartPlayer'
+                  );
+
+            if (!savedPlayer) {
+                return;
+            }
+
+            const searchText =
+                  savedPlayer
+            .trim()
+            .toLowerCase();
+
+            if (!searchText) {
+                return;
+            }
+
+            const rowCount =
+                  dailyPlayerModel.getRowCount();
+
+            let foundIndex = -1;
+
+            for (
+                let i = 0;
+                i < rowCount;
+                i++
+            ) {
+
+                const playerName =
+                      String(
+                          dailyPlayerModel.getValue(
+                              1,
+                              i
+                          ) || ''
+                      );
+
+                if (
+                    playerName
+                    .trim()
+                    .toLowerCase() === searchText
+                ) {
+                    foundIndex = i;
+                    break;
+                }
+            }
+
+            if (foundIndex === -1) {
+                return;
+            }
+
+            const selectionModel =
+                  dailyPlayerTable
+            .getSelectionModel();
+
+            selectionModel.setSelectionInterval(
+                foundIndex,
+                foundIndex
+            );
+
+            const paneScroller =
+                  dailyPlayerTable.getPaneScroller(
+                      0
+                  );
+
+            paneScroller.setScrollY(
+                Math.max(
+                    0,
+                    (foundIndex - 3) * 20
+                )
+            );
+        }
+
+
         // -----------------------------------------------------
         // Allianz Daily-Ranking
         // -----------------------------------------------------
 
         const dailyAllianceLabel =
               new qx.ui.basic.Label(
-                  'Allianzen – Top 25'
+                  t('alliancesTop')
               );
 
         dailyAllianceLabel.set({
@@ -2889,11 +3225,11 @@
             new qx.ui.table.model.Simple();
 
         dailyAllianceModel.setColumns([
-            'Rang',
-            'Allianz',
-            'Snapshot',
-            'Punkte aktuell',
-            'Änderung'
+            t('rank'),
+            t('allianceColumn'),
+            t('snapshot'),
+            t('currentPoints'),
+            t('change')
         ]);
 
 
@@ -2904,7 +3240,7 @@
 
         dailyAllianceTable.set({
             width: 730,
-            height: 210,
+            height: 240,
             decorator: 'main',
             showCellFocusIndicator: false
         });
@@ -3098,6 +3434,38 @@
 
         function renderDailyRanking() {
 
+            const dailyFrom =
+                  Math.max(
+                      1,
+                      Math.min(
+                          1000,
+                          parseInt(
+                              dailyFromField.getValue(),
+                              10
+                          ) || 1
+                      )
+                  );
+
+            const dailyTo =
+                  Math.max(
+                      dailyFrom,
+                      Math.min(
+                          1000,
+                          parseInt(
+                              dailyToField.getValue(),
+                              10
+                          ) || 1000
+                      )
+                  );
+
+            dailyPlayerLabel.setValue(
+                t('playerRange') +
+                ' ' +
+                dailyFrom +
+                ' – ' +
+                dailyTo
+            );
+
             const playerSnapshot =
                   loadLatestRankingSnapshot();
 
@@ -3119,19 +3487,19 @@
 
             const snapshotHeader =
                   snapshotTime
-            ? `Snapshot (${snapshotTime})`
-                      : 'Snapshot';
+            ? `${t('snapshot')} (${snapshotTime})`
+    : t('snapshot');
 
 
             if (dailyPlayerModel) {
 
                 dailyPlayerModel.setColumns([
-                    'Rang',
-                    'Spieler',
-                    'Allianz',
+                    t('rank'),
+                    t('playerColumn'),
+                    t('allianceColumn'),
                     snapshotHeader,
-                    'Punkte aktuell',
-                    'Änderung'
+                    t('currentPoints'),
+                    t('change')
                 ]);
             }
 
@@ -3139,11 +3507,11 @@
             if (dailyAllianceModel) {
 
                 dailyAllianceModel.setColumns([
-                    'Rang',
-                    'Allianz',
+                    t('rank'),
+                    t('allianceColumn'),
                     snapshotHeader,
-                    'Punkte aktuell',
-                    'Änderung'
+                    t('currentPoints'),
+                    t('change')
                 ]);
             }
 
@@ -3232,10 +3600,39 @@
                 );
 
 
+                const dailyFrom =
+                      Math.max(
+                          1,
+                          Math.min(
+                              1000,
+                              parseInt(
+                                  dailyFromField.getValue(),
+                                  10
+                              ) || 1
+                          )
+                      );
+
+                const dailyTo =
+                      Math.max(
+                          dailyFrom,
+                          Math.min(
+                              1000,
+                              parseInt(
+                                  dailyToField.getValue(),
+                                  10
+                              ) || 1000
+                          )
+                      );
+
                 const playerRows =
                       playerNames
-                .slice(0, 100)
+                .slice(
+                    dailyFrom - 1,
+                    dailyTo
+                )
                 .map(
+
+
                     function (playerName) {
 
                         const saved =
@@ -3538,302 +3935,304 @@
         }
 
 
-        dailyRankingRefreshCallback =
-            renderDailyRanking;
+dailyRankingRefreshCallback =
+    renderDailyRanking;
 
 
-        mainContainer.add(
-            dailyContent,
-            {
-                flex: 1
-            }
-        );
+mainContainer.add(
+    dailyContent,
+    {
+        flex: 1
+    }
+);
 
 
 
 
-        // =====================================================
-        // RANKING-INHALT
-        // =====================================================
+// =====================================================
+// RANKING-INHALT
+// =====================================================
 
-        const rankingContent =
-              new qx.ui.container.Composite(
-                  new qx.ui.layout.VBox(0)
-              );
+const rankingContent =
+      new qx.ui.container.Composite(
+          new qx.ui.layout.VBox(0)
+      );
 
-        mainContainer.add(
-            rankingContent,
-            {
-                flex: 1
-            }
-        );
+mainContainer.add(
+    rankingContent,
+    {
+        flex: 1
+    }
+);
 
-        rankingContent.setVisibility(
-            'excluded'
-        );
+rankingContent.setVisibility(
+    'excluded'
+);
 
-        // =====================================================
-        // STARTANSICHT
-        // =====================================================
+// =====================================================
+// STARTANSICHT
+// =====================================================
 
-        if (startView === 'daily') {
+if (startView === 'daily') {
 
-            rangeContainer.setVisibility(
-                'excluded'
-            );
+    rangeContainer.setVisibility(
+        'excluded'
+    );
 
-            snapshotContainer.setVisibility(
-                'visible'
-            );
+    snapshotContainer.setVisibility(
+        'visible'
+    );
 
-            rankingContent.setVisibility(
-                'excluded'
-            );
+    rankingContent.setVisibility(
+        'excluded'
+    );
 
-            dailyContent.setVisibility(
-                'visible'
-            );
+    dailyContent.setVisibility(
+        'visible'
+    );
 
-            updateSnapshotStatusLabel();
+    updateSnapshotStatusLabel();
 
-            requestDailyPlayerRanking(
-                function (players) {
+    requestDailyPlayerRanking(
+        function (players) {
 
-                    dailyCurrentPlayers =
-                        players || [];
-
-                    renderDailyRanking();
-                }
-            );
-
-            requestDailyAllianceRanking(
-                function (alliances) {
-
-                    dailyCurrentAlliances =
-                        alliances || [];
-
-                    renderDailyRanking();
-                }
-            );
+            dailyCurrentPlayers =
+                players || [];
 
             renderDailyRanking();
 
-        } else {
+            jumpToSavedDailyStartPlayer();
+        }
+    );
 
-            rangeContainer.setVisibility(
-                'visible'
+    requestDailyAllianceRanking(
+        function (alliances) {
+
+            dailyCurrentAlliances =
+                alliances || [];
+
+            renderDailyRanking();
+        }
+    );
+
+    renderDailyRanking();
+
+} else {
+
+    rangeContainer.setVisibility(
+        'visible'
+    );
+
+    snapshotContainer.setVisibility(
+        'excluded'
+    );
+
+    dailyContent.setVisibility(
+        'excluded'
+    );
+
+    rankingContent.setVisibility(
+        'visible'
+    );
+
+}
+
+// =====================================================
+// TABELLENMODELL
+// =====================================================
+
+const tableModel =
+      new qx.ui.table.model.Simple();
+
+
+// -----------------------------------------------------
+// Normale Spieler-Ranking-Spalten
+// -----------------------------------------------------
+// Snapshot-Spalten gehören ausschließlich ins Daily-Ranking.
+tableModel.setColumns([
+    'Rang',
+    'Spieler',
+    'Allianz',
+    'Punkte',
+    '',
+    'Änderung'
+]);
+
+
+// -----------------------------------------------------
+// Daten vorbereiten
+// -----------------------------------------------------
+
+const tableData =
+      players.map(function (player) {
+
+          const change =
+                calculatePointChange(
+                    player,
+                    previousPoints
+                );
+
+          let changeText = '—';
+
+          let changeArrow = '—';
+          let changeValue = '';
+
+          if (change.type === 'up') {
+
+              changeArrow = '▲';
+
+              changeValue =
+                  change.value.toLocaleString('de-DE');
+
+          }
+
+          if (change.type === 'down') {
+
+              changeArrow = '▼';
+
+              changeValue =
+                  change.value.toLocaleString('de-DE');
+
+          }
+
+
+          return [
+
+              player.r,
+
+              player.pn || '-',
+
+              player.an || '-',
+
+              Number(player.s || 0)
+              .toLocaleString('de-DE'),
+
+              changeArrow,
+
+              changeValue
+          ];
+      });
+
+
+tableModel.setData(
+    tableData
+);
+
+
+// =====================================================
+// TABELLE
+// =====================================================
+
+const rankingTable =
+      new qx.ui.table.Table(
+          tableModel
+      );
+
+// =====================================================
+// SPIELERSUCHE
+// =====================================================
+
+searchButton.addListener(
+    'execute',
+    function () {
+
+        const searchText =
+              String(
+                  searchField.getValue() || ''
+              )
+        .trim()
+        .toLowerCase();
+
+
+        // -------------------------------------------------
+        // Leere Suche
+        // -------------------------------------------------
+
+        if (!searchText) {
+
+            log.warning(
+                'Bitte einen Spielernamen eingeben.'
             );
 
-            snapshotContainer.setVisibility(
-                'excluded'
-            );
-
-            dailyContent.setVisibility(
-                'excluded'
-            );
-
-            rankingContent.setVisibility(
-                'visible'
-            );
-
+            return;
         }
 
-        // =====================================================
-        // TABELLENMODELL
-        // =====================================================
 
-        const tableModel =
-              new qx.ui.table.model.Simple();
+        // -------------------------------------------------
+        // Spieler suchen
+        // -------------------------------------------------
 
-
-        // -----------------------------------------------------
-        // Normale Spieler-Ranking-Spalten
-        // -----------------------------------------------------
-        // Snapshot-Spalten gehören ausschließlich ins Daily-Ranking.
-        tableModel.setColumns([
-            'Rang',
-            'Spieler',
-            'Allianz',
-            'Punkte',
-            '',
-            'Änderung'
-        ]);
+        let foundIndex = -1;
 
 
-        // -----------------------------------------------------
-        // Daten vorbereiten
-        // -----------------------------------------------------
+        // Exakter Treffer
+        for (
+            let i = 0;
+            i < players.length;
+            i++
+        ) {
 
-        const tableData =
-              players.map(function (player) {
-
-                  const change =
-                        calculatePointChange(
-                            player,
-                            previousPoints
-                        );
-
-                  let changeText = '—';
-
-                  let changeArrow = '—';
-                  let changeValue = '';
-
-                  if (change.type === 'up') {
-
-                      changeArrow = '▲';
-
-                      changeValue =
-                          change.value.toLocaleString('de-DE');
-
-                  }
-
-                  if (change.type === 'down') {
-
-                      changeArrow = '▼';
-
-                      changeValue =
-                          change.value.toLocaleString('de-DE');
-
-                  }
+            const playerName =
+                  String(
+                      players[i].pn || ''
+                  )
+            .trim()
+            .toLowerCase();
 
 
-                  return [
+            if (
+                playerName === searchText
+            ) {
 
-                      player.r,
+                foundIndex = i;
 
-                      player.pn || '-',
-
-                      player.an || '-',
-
-                      Number(player.s || 0)
-                      .toLocaleString('de-DE'),
-
-                      changeArrow,
-
-                      changeValue
-                  ];
-              });
+                break;
+            }
+        }
 
 
-        tableModel.setData(
-            tableData
-        );
+        // -------------------------------------------------
+        // Teiltreffer
+        // -------------------------------------------------
 
+        if (foundIndex === -1) {
 
-        // =====================================================
-        // TABELLE
-        // =====================================================
+            for (
+                let i = 0;
+                i < players.length;
+                i++
+            ) {
 
-        const rankingTable =
-              new qx.ui.table.Table(
-                  tableModel
-              );
-
-        // =====================================================
-        // SPIELERSUCHE
-        // =====================================================
-
-        searchButton.addListener(
-            'execute',
-            function () {
-
-                const searchText =
+                const playerName =
                       String(
-                          searchField.getValue() || ''
+                          players[i].pn || ''
                       )
                 .trim()
                 .toLowerCase();
 
 
-                // -------------------------------------------------
-                // Leere Suche
-                // -------------------------------------------------
-
-                if (!searchText) {
-
-                    log.warning(
-                        'Bitte einen Spielernamen eingeben.'
-                    );
-
-                    return;
-                }
-
-
-                // -------------------------------------------------
-                // Spieler suchen
-                // -------------------------------------------------
-
-                let foundIndex = -1;
-
-
-                // Exakter Treffer
-                for (
-                    let i = 0;
-                    i < players.length;
-                    i++
+                if (
+                    playerName.includes(
+                        searchText
+                    )
                 ) {
 
-                    const playerName =
-                          String(
-                              players[i].pn || ''
-                          )
-                    .trim()
-                    .toLowerCase();
+                    foundIndex = i;
 
-
-                    if (
-                        playerName === searchText
-                    ) {
-
-                        foundIndex = i;
-
-                        break;
-                    }
+                    break;
                 }
+            }
+        }
 
 
-                // -------------------------------------------------
-                // Teiltreffer
-                // -------------------------------------------------
+        // -------------------------------------------------
+        // Kein Treffer
+        // -------------------------------------------------
 
-                if (foundIndex === -1) {
+        if (foundIndex === -1) {
 
-                    for (
-                        let i = 0;
-                        i < players.length;
-                        i++
-                    ) {
-
-                        const playerName =
-                              String(
-                                  players[i].pn || ''
-                              )
-                        .trim()
-                        .toLowerCase();
-
-
-                        if (
-                            playerName.includes(
-                                searchText
-                            )
-                        ) {
-
-                            foundIndex = i;
-
-                            break;
-                        }
-                    }
-                }
-
-
-                // -------------------------------------------------
-                // Kein Treffer
-                // -------------------------------------------------
-
-                if (foundIndex === -1) {
-
-                    log.warning(
-                        `Spieler "${searchField.getValue()}" wurde im aktuellen Rangbereich nicht gefunden.`
+            log.warning(
+                `Spieler "${searchField.getValue()}" wurde im aktuellen Rangbereich nicht gefunden.`
             );
 
                     return;
@@ -3876,219 +4275,219 @@
 
             }
         );
-        rankingTable.set({
+rankingTable.set({
 
-            width: 730,
+    width: 730,
 
-            height: 560,
+    height: 560,
 
-            decorator: 'main',
+    decorator: 'main',
 
-            showCellFocusIndicator: false
-        });
-
-
-        // -----------------------------------------------------
-        // Spaltenbreiten
-        // -----------------------------------------------------
-
-        const columnModel =
-              rankingTable.getTableColumnModel();
+    showCellFocusIndicator: false
+});
 
 
-        // Rang
-        columnModel.setColumnWidth(
-            0,
-            50
-        );
+// -----------------------------------------------------
+// Spaltenbreiten
+// -----------------------------------------------------
+
+const columnModel =
+      rankingTable.getTableColumnModel();
 
 
-        // Spieler
-        columnModel.setColumnWidth(
-            1,
-            130
-        );
+// Rang
+columnModel.setColumnWidth(
+    0,
+    50
+);
 
 
-        // Allianz
-        columnModel.setColumnWidth(
-            2,
-            130
-        );
+// Spieler
+columnModel.setColumnWidth(
+    1,
+    130
+);
 
 
-        // Punkte
-        columnModel.setColumnWidth(
-            3,
-            90
-        );
+// Allianz
+columnModel.setColumnWidth(
+    2,
+    130
+);
 
 
-        // Pfeil
-        columnModel.setColumnWidth(
-            4,
-            35
-        );
+// Punkte
+columnModel.setColumnWidth(
+    3,
+    90
+);
 
 
-        // Änderung
-        columnModel.setColumnWidth(
-            5,
-            95
-        );
-
-        // =========================================================
-        // FARBIGE VERGLEICHSSPALTE
-        // =========================================================
-
-        const arrowRenderer =
-              new qx.ui.table.cellrenderer.Default();
-
-        arrowRenderer._getCellStyle =
-            function (cellInfo) {
-
-            const value =
-                  String(cellInfo.value || '');
-
-            if (value === '▲') {
-
-                return [
-                    'color:#00cc66',
-                    'font-weight:bold',
-                    'text-align:center'
-                ].join(';') + ';';
-            }
-
-            if (value === '▼') {
-
-                return [
-                    'color:#ff4444',
-                    'font-weight:bold',
-                    'text-align:center'
-                ].join(';') + ';';
-            }
-
-            return [
-                'color:#888888',
-                'font-weight:bold',
-                'text-align:center'
-            ].join(';') + ';';
-        };
-
-        columnModel.setDataCellRenderer(
-            4,
-            arrowRenderer
-        );
-
-        // -----------------------------------------------------
-        // Statuszeile der Tabelle
-        // -----------------------------------------------------
-
-        rankingTable.setAdditionalStatusBarText(
-            `${players.length} Spieler angezeigt`
-        );
+// Pfeil
+columnModel.setColumnWidth(
+    4,
+    35
+);
 
 
-        // =====================================================
-        // TABELLE EINBAUEN
-        // =====================================================
+// Änderung
+columnModel.setColumnWidth(
+    5,
+    95
+);
 
-        rankingContent.add(
-            rankingTable,
-            {
-                flex: 1
-            }
-        );
+// =========================================================
+// FARBIGE VERGLEICHSSPALTE
+// =========================================================
 
+const arrowRenderer =
+      new qx.ui.table.cellrenderer.Default();
 
-        rankingWindow.add(
-            mainContainer
-        );
+arrowRenderer._getCellStyle =
+    function (cellInfo) {
 
+    const value =
+          String(cellInfo.value || '');
 
-        // =====================================================
-        // FENSTER SCHLIESSEN
-        // =====================================================
+    if (value === '▲') {
 
-        rankingWindow.addListener(
-            'close',
-            function () {
-
-                rankingWindow =
-                    null;
-
-                dailyRankingRefreshCallback =
-                    null;
-
-                log.info(
-                    'Ranking-Fenster geschlossen.'
-                );
-            }
-        );
-
-
-        // =====================================================
-        // FENSTER ÖFFNEN
-        // =====================================================
-
-        qxApp
-            .getRoot()
-            .add(
-            rankingWindow
-        );
-
-
-        rankingWindow.open();
-
-        rankingWindow.center();
-
-        saveCurrentPoints(players);
-
-        log.success(
-            `${players.length} Spieler werden angezeigt.`
-        );
+        return [
+            'color:#00cc66',
+            'font-weight:bold',
+            'text-align:center'
+        ].join(';') + ';';
     }
 
+    if (value === '▼') {
 
-    // =========================================================
-    // Player RANKING ABRUFEN
-    // =========================================================
+        return [
+            'color:#ff4444',
+            'font-weight:bold',
+            'text-align:center'
+        ].join(';') + ';';
+    }
 
-    function requestPlayerRanking(startView) {
+    return [
+        'color:#888888',
+        'font-weight:bold',
+        'text-align:center'
+    ].join(';') + ';';
+};
 
-        log.section(
-            'SPIELER-RANKING ABRUF'
+columnModel.setDataCellRenderer(
+    4,
+    arrowRenderer
+);
+
+// -----------------------------------------------------
+// Statuszeile der Tabelle
+// -----------------------------------------------------
+
+rankingTable.setAdditionalStatusBarText(
+    `${players.length} Spieler angezeigt`
         );
 
 
-        try {
+// =====================================================
+// TABELLE EINBAUEN
+// =====================================================
 
-            const view =
-                  ClientLib.Data.Ranking.EViewType.Player;
-
-
-            const rankingType =
-                  0;
-
-
-            const sortColumn =
-                  ClientLib.Data.Ranking.ESortColumn.Rank;
+rankingContent.add(
+    rankingTable,
+    {
+        flex: 1
+    }
+);
 
 
-            const ascending =
-                  true;
+rankingWindow.add(
+    mainContainer
+);
 
-            const rankingRange =
-                  loadPlayerRankingRange();
 
-            const firstIndex =
-                  rankingRange.from - 1;
+// =====================================================
+// FENSTER SCHLIESSEN
+// =====================================================
 
-            const lastIndex =
-                  rankingRange.to - 1;
+rankingWindow.addListener(
+    'close',
+    function () {
 
-            log.info(
-                `Fordere Rang ${rankingRange.from} bis ${rankingRange.to} an...`
+        rankingWindow =
+            null;
+
+        dailyRankingRefreshCallback =
+            null;
+
+        log.info(
+            'Ranking-Fenster geschlossen.'
+        );
+    }
+);
+
+
+// =====================================================
+// FENSTER ÖFFNEN
+// =====================================================
+
+qxApp
+    .getRoot()
+    .add(
+    rankingWindow
+);
+
+
+rankingWindow.open();
+
+rankingWindow.center();
+
+saveCurrentPoints(players);
+
+log.success(
+    `${players.length} Spieler werden angezeigt.`
+        );
+}
+
+
+// =========================================================
+// Player RANKING ABRUFEN
+// =========================================================
+
+function requestPlayerRanking(startView) {
+
+    log.section(
+        'SPIELER-RANKING ABRUF'
+    );
+
+
+    try {
+
+        const view =
+              ClientLib.Data.Ranking.EViewType.Player;
+
+
+        const rankingType =
+              0;
+
+
+        const sortColumn =
+              ClientLib.Data.Ranking.ESortColumn.Rank;
+
+
+        const ascending =
+              true;
+
+        const rankingRange =
+              loadPlayerRankingRange();
+
+        const firstIndex =
+              rankingRange.from - 1;
+
+        const lastIndex =
+              rankingRange.to - 1;
+
+        log.info(
+            `Fordere Rang ${rankingRange.from} bis ${rankingRange.to} an...`
             );
 
             log.info(
@@ -4181,256 +4580,256 @@
         }
     }
 
-    // =========================================================
-    // ALLIANZ-RANKING ABRUFEN – TEST
-    // =========================================================
+// =========================================================
+// ALLIANZ-RANKING ABRUFEN – TEST
+// =========================================================
 
-    function requestAllianceRanking(onSuccess) {
+function requestAllianceRanking(onSuccess) {
 
-        log.section(
-            'ALLIANZ-RANKING ABRUF'
-        );
+    log.section(
+        'ALLIANZ-RANKING ABRUF'
+    );
 
-        try {
+    try {
 
-            const view =
-                  ClientLib.Data.Ranking.EViewType.Alliance;
+        const view =
+              ClientLib.Data.Ranking.EViewType.Alliance;
 
-            const rankingType =
-                  0;
+        const rankingType =
+              0;
 
-            const sortColumn =
-                  ClientLib.Data.Ranking.ESortColumn.Rank;
+        const sortColumn =
+              ClientLib.Data.Ranking.ESortColumn.Rank;
 
-            const ascending =
-                  true;
-
-
-            ClientLib.Net.CommunicationManager
-                .GetInstance()
-                .SendSimpleCommand(
-
-                'RankingGetData',
-
-                {
-                    firstIndex: 0,
-                    lastIndex: 24,
-                    view: view,
-                    rankingType: rankingType,
-                    sortColumn: sortColumn,
-                    ascending: ascending
-                },
+        const ascending =
+              true;
 
 
-                phe.cnc.Util.createEventDelegate(
+        ClientLib.Net.CommunicationManager
+            .GetInstance()
+            .SendSimpleCommand(
 
-                    ClientLib.Net.CommandResult,
+            'RankingGetData',
 
-                    this,
+            {
+                firstIndex: 0,
+                lastIndex: 24,
+                view: view,
+                rankingType: rankingType,
+                sortColumn: sortColumn,
+                ascending: ascending
+            },
 
 
-                    function (
-                    context,
-                     data
-                    ) {
+            phe.cnc.Util.createEventDelegate(
 
-                        if (Array.isArray(data.a)) {
+                ClientLib.Net.CommandResult,
 
-                            data.a.forEach(
-                                function (alliance, index) {
+                this,
 
-                                    log.info(
-                                        `Allianz ${index + 1}: Rang=${alliance.r}, Name=${alliance.an}, Top40=${alliance.s}, Spieler=${alliance.pc}, Basen=${alliance.bc}, sa=${alliance.sa}, sc=${alliance.sc}`
+
+                function (
+                context,
+                 data
+                ) {
+
+                    if (Array.isArray(data.a)) {
+
+                        data.a.forEach(
+                            function (alliance, index) {
+
+                                log.info(
+                                    `Allianz ${index + 1}: Rang=${alliance.r}, Name=${alliance.an}, Top40=${alliance.s}, Spieler=${alliance.pc}, Basen=${alliance.bc}, sa=${alliance.sa}, sc=${alliance.sc}`
                                     );
 
-                                }
-                            );
-
-
-                            if (typeof onSuccess === 'function') {
-
-                                onSuccess(data.a);
-
                             }
-
-                        }
-
-
-                        if (
-                            !data
-                        ) {
-
-                            log.error(
-                                'Keine Allianz-Daten erhalten.',
-                                data
-                            );
-
-                            return;
-                        }
-
-
-                        log.success(
-                            'Allianz-Ranking erfolgreich empfangen!'
                         );
 
+
+                        if (typeof onSuccess === 'function') {
+
+                            onSuccess(data.a);
+
+                        }
+
                     }
-                ),
 
 
-                null
-            );
+                    if (
+                        !data
+                    ) {
 
+                        log.error(
+                            'Keine Allianz-Daten erhalten.',
+                            data
+                        );
 
-        } catch (e) {
-
-            log.error(
-                'Fehler beim Allianz-Ranking-Abruf:',
-                e
-            );
-
-            console.error(e);
-        }
-    }
-    // =========================================================
-    // SCRIPTE-MENÜ
-    // =========================================================
-
-    const rankingToolIcon =
-          'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADKElEQVR42gXBS2tcZQCA4ff75pyZMzNnck4yaZqGmZgL0TYRarEGhIrULrygLtqVK8GNv8BfIG5EoQt3grhxUURQFCwWrGlEqq2toERikyZN086lM8nMZC7n8l18HgHY1bNnePGFMyiV4gcFRiQYJ0G4llSlCJNBD8H38rSbB0gy/Luxw81bdxFLi/N29fnTfH/1GqnRBKGPlZZKdZyZyiRgqT1qsbvbxhpLr9NHx5bXL7zEf1sPkPOzFX5au0FkU3AsB4MWjVabt18u8e3nb/H15fNcOlegFfVJnZRgLmT69Djrt/9ktjKNk3EkuXwOOeqzsvws1dkTdOMY3X/E3z+v4zmWdqONSDUnnivzxZVX+fTjdX78pMbEZICTpopSsch+rcYr585z6eJFkiRm7ZsP2Ln3AEGWJ90YfJc33lniu7Xb/HZth3J5isEwwun0ByijEI5g7+Eea2vXGSYR+3sHqGaXNNb0I8n7l1eZMYofPupQ30iYm4L2YQcJBmMNVlq6vR7NVpPNf7aIJyVT71WJ5j1OvjuJ2X3C05s+by6GCAUWi8wIpNYag0Y4gnbrgN9v3CG3tE3pguLKl9sMzjrc/KVO+6sO9/fr3NlughAYrVFK4yiVotFYaWn0HvHMa5Z6ucPGh0Oe8uHXz46I90GGguu3tqh3E6y0GAxaKxxtDKlSeI5HMF1g1JBsX4VyaZrsoseUNnSk4t7jLsfGysReTMGtk6oUbQzi1KkFexh3qVbm8GSeo6MhhphivoSbyeJmHQbRAJmBJE3xSz6do0PqjcdM+WUcL+tgR5ZyOIFE4Ad5/LxP97BHGIyRqBG9XofqbJXRMKI0VuJYOEGjXqOYzyFWluftTqtGnIkIAw+ZEYRBgbDsIoRAaUWhmGfjjyYia5E4RKkh7WtOVuYQC/MzNnUMD+t1KIDrg8hAzoXjVQ8pBIeHETqFo44l7QMDmD4+Sej6CMfJ2JXlBRJp6I+GOFmJW5AksSEMXKQjaDdiMh6YCJJYMVb0CfNF/rq7iQCsFILFhQrjQcBwFBEnCiFAa4MFXFditCWXdcjlXAajiO37+6Sp4n+au4wgLQZ84QAAAABJRU5ErkJggg==';
-
-
-    function addScriptsMenuEntry() {
-
-        try {
-
-            log.section(
-                'SCRIPTE-MENÜ'
-            );
-
-
-            const scriptsButton =
-                  qxApp
-            .getMenuBar()
-            .getScriptsButton();
-
-
-            log.info(
-                'Scripte-Button gefunden.'
-            );
-
-
-            // -------------------------------------------------
-            // Menüeintrag hinzufügen
-            // -------------------------------------------------
-
-            scriptsButton.Add(
-                scriptName,
-                rankingToolIcon
-            );
-
-
-            log.success(
-                'Menüeintrag wurde hinzugefügt.'
-            );
-
-
-            // -------------------------------------------------
-            // Menü holen
-            // -------------------------------------------------
-
-            const menu =
-                  scriptsButton.getMenu();
-
-
-            if (!menu) {
-
-                log.error(
-                    'Scripte-Menü konnte nicht gefunden werden.'
-                );
-
-                return;
-            }
-
-
-            // -------------------------------------------------
-            // Menüeinträge suchen
-            // -------------------------------------------------
-
-            const children =
-                  menu.getChildren();
-
-
-            log.info(
-                `Menü enthält ${children.length} Einträge.`
-            );
-
-
-            const menuItem =
-                  children.find(
-                      item =>
-                      item.getLabel &&
-                      item.getLabel() === scriptName
-                  );
-
-
-            if (!menuItem) {
-
-                log.error(
-                    `Menüeintrag "${scriptName}" konnte nach dem Hinzufügen nicht gefunden werden.`
-                );
-
-                return;
-            }
-
-
-            log.success(
-                'Menüeintrag gefunden.',
-                menuItem
-            );
-
-
-            // -------------------------------------------------
-            // Klick / Ausführung
-            // -------------------------------------------------
-
-            menuItem.addListener(
-
-                'execute',
-
-                function () {
-
-                    log.section(
-                        'RANKINGTOOL AUFGERUFEN'
-                    );
+                        return;
+                    }
 
 
                     log.success(
-                        'Klick auf RankingTool erkannt.'
+                        'Allianz-Ranking erfolgreich empfangen!'
                     );
 
-
-                    requestPlayerRanking('daily');
-                },
-
-                this
-            );
+                }
+            ),
 
 
-            log.success(
-                'Execute-Listener erfolgreich registriert.'
-            );
+            null
+        );
 
 
-        } catch (e) {
+    } catch (e) {
+
+        log.error(
+            'Fehler beim Allianz-Ranking-Abruf:',
+            e
+        );
+
+        console.error(e);
+    }
+}
+// =========================================================
+// SCRIPTE-MENÜ
+// =========================================================
+
+const rankingToolIcon =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADKElEQVR42gXBS2tcZQCA4ff75pyZMzNnck4yaZqGmZgL0TYRarEGhIrULrygLtqVK8GNv8BfIG5EoQt3grhxUURQFCwWrGlEqq2toERikyZN086lM8nMZC7n8l18HgHY1bNnePGFMyiV4gcFRiQYJ0G4llSlCJNBD8H38rSbB0gy/Luxw81bdxFLi/N29fnTfH/1GqnRBKGPlZZKdZyZyiRgqT1qsbvbxhpLr9NHx5bXL7zEf1sPkPOzFX5au0FkU3AsB4MWjVabt18u8e3nb/H15fNcOlegFfVJnZRgLmT69Djrt/9ktjKNk3EkuXwOOeqzsvws1dkTdOMY3X/E3z+v4zmWdqONSDUnnivzxZVX+fTjdX78pMbEZICTpopSsch+rcYr585z6eJFkiRm7ZsP2Ln3AEGWJ90YfJc33lniu7Xb/HZth3J5isEwwun0ByijEI5g7+Eea2vXGSYR+3sHqGaXNNb0I8n7l1eZMYofPupQ30iYm4L2YQcJBmMNVlq6vR7NVpPNf7aIJyVT71WJ5j1OvjuJ2X3C05s+by6GCAUWi8wIpNYag0Y4gnbrgN9v3CG3tE3pguLKl9sMzjrc/KVO+6sO9/fr3NlughAYrVFK4yiVotFYaWn0HvHMa5Z6ucPGh0Oe8uHXz46I90GGguu3tqh3E6y0GAxaKxxtDKlSeI5HMF1g1JBsX4VyaZrsoseUNnSk4t7jLsfGysReTMGtk6oUbQzi1KkFexh3qVbm8GSeo6MhhphivoSbyeJmHQbRAJmBJE3xSz6do0PqjcdM+WUcL+tgR5ZyOIFE4Ad5/LxP97BHGIyRqBG9XofqbJXRMKI0VuJYOEGjXqOYzyFWluftTqtGnIkIAw+ZEYRBgbDsIoRAaUWhmGfjjyYia5E4RKkh7WtOVuYQC/MzNnUMD+t1KIDrg8hAzoXjVQ8pBIeHETqFo44l7QMDmD4+Sej6CMfJ2JXlBRJp6I+GOFmJW5AksSEMXKQjaDdiMh6YCJJYMVb0CfNF/rq7iQCsFILFhQrjQcBwFBEnCiFAa4MFXFditCWXdcjlXAajiO37+6Sp4n+au4wgLQZ84QAAAABJRU5ErkJggg==';
+
+
+function addScriptsMenuEntry() {
+
+    try {
+
+        log.section(
+            'SCRIPTE-MENÜ'
+        );
+
+
+        const scriptsButton =
+              qxApp
+        .getMenuBar()
+        .getScriptsButton();
+
+
+        log.info(
+            'Scripte-Button gefunden.'
+        );
+
+
+        // -------------------------------------------------
+        // Menüeintrag hinzufügen
+        // -------------------------------------------------
+
+        scriptsButton.Add(
+            scriptName,
+            rankingToolIcon
+        );
+
+
+        log.success(
+            'Menüeintrag wurde hinzugefügt.'
+        );
+
+
+        // -------------------------------------------------
+        // Menü holen
+        // -------------------------------------------------
+
+        const menu =
+              scriptsButton.getMenu();
+
+
+        if (!menu) {
 
             log.error(
-                'Fehler beim Scripte-Menü:',
-                e
+                'Scripte-Menü konnte nicht gefunden werden.'
             );
 
-            console.error(e);
+            return;
         }
+
+
+        // -------------------------------------------------
+        // Menüeinträge suchen
+        // -------------------------------------------------
+
+        const children =
+              menu.getChildren();
+
+
+        log.info(
+            `Menü enthält ${children.length} Einträge.`
+            );
+
+
+        const menuItem =
+              children.find(
+                  item =>
+                  item.getLabel &&
+                  item.getLabel() === scriptName
+              );
+
+
+        if (!menuItem) {
+
+            log.error(
+                `Menüeintrag "${scriptName}" konnte nach dem Hinzufügen nicht gefunden werden.`
+                );
+
+            return;
+        }
+
+
+        log.success(
+            'Menüeintrag gefunden.',
+            menuItem
+        );
+
+
+        // -------------------------------------------------
+        // Klick / Ausführung
+        // -------------------------------------------------
+
+        menuItem.addListener(
+
+            'execute',
+
+            function () {
+
+                log.section(
+                    'RANKINGTOOL AUFGERUFEN'
+                );
+
+
+                log.success(
+                    'Klick auf RankingTool erkannt.'
+                );
+
+
+                requestPlayerRanking('daily');
+            },
+
+            this
+        );
+
+
+        log.success(
+            'Execute-Listener erfolgreich registriert.'
+        );
+
+
+    } catch (e) {
+
+        log.error(
+            'Fehler beim Scripte-Menü:',
+            e
+        );
+
+        console.error(e);
     }
+}
 
 
 // =========================================================
