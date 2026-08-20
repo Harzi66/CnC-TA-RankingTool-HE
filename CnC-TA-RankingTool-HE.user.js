@@ -11,6 +11,7 @@
 // @grant        none
 // ==/UserScript==
 
+
 // Neu in Version 1.5.25
 // Bereiche Spieler-Ranking & Allianz-Ranking entfernt
 // Spieler-Ranking auf 1000 erhöht.
