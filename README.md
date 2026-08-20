@@ -60,6 +60,8 @@ direkt aus diesem Repository heruntergeladen und in Tampermonkey installiert wer
 
 ![CnC-TA RankingTool](Screenshot_3.png)
 
+https://github.com/Harzi66/CnC-TA-RankingTool-HE/blob/main/Screenshot_1.png
+
 
 
 
